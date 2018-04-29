@@ -5,7 +5,7 @@
  */
 package clientes;
 
-import datos.Conexion;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -20,11 +20,10 @@ public class Clientes {
      */
     public static void main(String[] args) throws IOException {
         Scanner cin = new Scanner(System.in);
-        String ipServidor="192.168.84.200";
-        String mensaje = "";
-        Socket clienteSocket= new Socket(ipServidor,1234);
+        String ipServidor="192.168.77.200";
+        Socket clienteSocket = new Socket(ipServidor,1234);
         Thread hiloEscritura, hiloLectura;
-        ObjectOutputStream OOS = null;
+        ObjectOutputStream OOS =(ObjectOutputStream) clienteSocket.getOutputStream();
         hiloEscritura = new Thread(new ClienteHiloEscritura(clienteSocket,OOS));
         hiloLectura = new Thread(new ClienteHiloLectura(clienteSocket));
         
