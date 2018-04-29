@@ -5,7 +5,9 @@
  */
 package clientes;
 
+import datos.Mensaje;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,35 +20,39 @@ import java.util.logging.Logger;
 public class ClienteHiloEscritura implements Runnable {
 
     Socket clientesSocketEscritura; 
-  
+    ObjectOutputStream OOS;
    public ClienteHiloEscritura (){
    
    }
    
-   public ClienteHiloEscritura (Socket socketParametro){
+   public ClienteHiloEscritura (Socket socketParametro, ObjectOutputStream OOS){
         this.clientesSocketEscritura=socketParametro;
+        this.OOS = OOS;
    
    }
     
     @Override
     public void run()
     {
-        String mensaje = "";
+        String texto = "";
         do
         {
-        Scanner cin = new Scanner(System.in);     
-        mensaje = cin.nextLine();
-        Escribiendo(mensaje);
-        }while(mensaje.compareTo("adios")!=0);
+           Scanner cin = new Scanner(System.in);     
+           texto = cin.nextLine();
+           Escribiendo(texto);
+        }while(texto.compareTo("adios")!=0);
     }
     
     
-    public synchronized void Escribiendo(String mensaje)
+    public synchronized void Escribiendo(String texto)
     {
+        Mensaje men = new Mensaje();
+        men.setOperacion("Mensaje");
+        men.setMensaje(texto);
         try
         {
-            clientesSocketEscritura.getOutputStream().write(mensaje.length());
-            clientesSocketEscritura.getOutputStream().write(mensaje.getBytes());
+            OOS = (ObjectOutputStream) clientesSocketEscritura.getOutputStream();
+            OOS.writeObject(men);
         } catch (IOException ex) 
         {
             System.out.println("Fallo en Escritura");  

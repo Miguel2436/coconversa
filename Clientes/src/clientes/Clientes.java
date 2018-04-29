@@ -7,6 +7,7 @@ package clientes;
 
 import datos.Conexion;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 /**
@@ -23,8 +24,8 @@ public class Clientes {
         String mensaje = "";
         Socket clienteSocket= new Socket(ipServidor,1234);
         Thread hiloEscritura, hiloLectura;
-        
-        hiloEscritura = new Thread(new ClienteHiloEscritura(clienteSocket));
+        ObjectOutputStream OOS = null;
+        hiloEscritura = new Thread(new ClienteHiloEscritura(clienteSocket,OOS));
         hiloLectura = new Thread(new ClienteHiloLectura(clienteSocket));
         
         hiloEscritura.start();
