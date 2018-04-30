@@ -13,9 +13,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.SocketFactory;
 
 /**
  *
@@ -63,7 +60,7 @@ public class HiloLecturaGeneral extends Thread{
     }
     
     public void leerSocket(String direccionCliente, Socket lectura) throws IOException, ClassNotFoundException{
-        ObjectInputStream ois = (ObjectInputStream) lectura.getInputStream();
+        ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
         Mensaje mensaje;
         mensaje = (Mensaje) ois.readObject();    
         
@@ -73,7 +70,7 @@ public class HiloLecturaGeneral extends Thread{
                 conexiones.put(direccionCliente, puerto);
             }
             
-            ObjectOutputStream oos = (ObjectOutputStream) lectura.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
             mensaje = new Mensaje();
             mensaje.setOperacion("SOLICITARCONEXION");
             mensaje.setEstado(true);

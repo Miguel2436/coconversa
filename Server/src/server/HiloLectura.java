@@ -35,7 +35,7 @@ public class HiloLectura extends Thread{
         Mensaje mensaje;
         while (1 == 1) {
             try {
-                ObjectInputStream ois = (ObjectInputStream) lectura.getInputStream();
+                ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
                 mensaje = (Mensaje) ois.readObject();
                 switch (mensaje.getOperacion()) {
                     case "LOGIN":
