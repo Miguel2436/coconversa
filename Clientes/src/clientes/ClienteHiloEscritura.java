@@ -62,7 +62,7 @@ public class ClienteHiloEscritura implements Runnable {
             System.out.println("Fallo en Escritura");  
         }
     }
-    public void logIn(String Username,String Pass){
+    public synchronized void logIn(String Username,String Pass){
         Mensaje log = new Mensaje();
         String localIp;
         log.setOperacion("LOGIN");
@@ -71,18 +71,26 @@ public class ClienteHiloEscritura implements Runnable {
         try {
             localIp = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex){
-           localIp = "";
+           localIp = "0.0.0.0";
+           //Como mandar error vista
         }
         log.setRemitente(localIp);
+        try{
+           synchronized (OOS){
+            OOS.writeObject(log);
+           }
+        }catch (IOException ex) {
+           //¿Como mandar error a vista?
+        }
     }
-    public void signUp(String Username,String Pass){
+    public synchronized void signUp(String Username,String Pass){
         Mensaje sign = new Mensaje();
         sign.setOperacion("SIGNUP");
         sign.setNombre(Username);
         sign.setMensaje(Pass);
         try{
            synchronized (OOS){
-            OOS.writeObject(OOS);
+            OOS.writeObject(sign);
            }
         }catch (IOException ex) {
            //¿Como mandar error a vista?
