@@ -159,4 +159,45 @@ public class ClienteHiloEscritura{
         }
         
     }
+   
+      //Método de aagregarAmigo que se lleva Nombre y Remitente (Ya hay una función pre-existente arriba por Dogo)
+   public void aagregarAmigo(String Username,String Remiente)
+    {
+        Mensaje add = new Mensaje();
+        add.setOperacion("AGREGAR_AMIGO");
+        add.setNombre(Username);
+        add.setRemitente(Remiente);
+        
+        try
+        {
+            OOS.writeObject(add);
+        }catch(IOException ex){}
+    }
+     
+     //Método de eliminarAmigo que se lleva Nombre
+    public void eliminarAmigo(String Username)
+    {
+      Mensaje remove = new Mensaje();
+      remove.setOperacion("ELIMINAR_AMIGO");
+      remove.setNombre("Username");
+      
+      try
+        {
+            OOS.writeObject(remove);
+        }catch(IOException ex){}
+    }
+    
+        //Método de crearGrupo que se lleva Nombre y setListaAmistades
+    public void crearGrupo(String Name, List<Amistad> Amigos)
+    {
+      Mensaje cGroup = new Mensaje();
+      cGroup.setOperacion("CREAR_GRUPO");
+      cGroup.setNombre(Name);
+      cGroup.setListaAmistades(Amigos);
+     
+      try
+        {
+            OOS.writeObject(cGroup);
+        }catch(IOException ex){}
+    }
 }
