@@ -5,7 +5,9 @@
  */
 package clientes;
 
+import datos.Mensaje;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,29 +20,55 @@ import java.util.logging.Logger;
 public class ClienteHiloLectura implements Runnable
 {
     
-    Socket clientesSocketLectura; 
-    byte []arreglo;
-   public ClienteHiloLectura (){
-   
+    private Socket clientesSocketLectura; 
+    private String Valor;
+    private ObjectInputStream OIS;
+    private Mensaje Paquete;
+    public ClienteHiloLectura (){
    }
    
-   public ClienteHiloLectura (Socket socketParametro){
-        this.clientesSocketLectura=socketParametro;
-   
+   public ClienteHiloLectura (Socket socketParametro) throws IOException{
+        this.clientesSocketLectura = socketParametro;
+        this.OIS = (ObjectInputStream)socketParametro.getInputStream();
+        Paquete = new Mensaje();
    }
 
     @Override
     public void run() 
     {
-        int i =1;
-        String mensaje = "";
-        do
-        {
-        Leyendo();  
-        }while(i<5);
+        while(clientesSocketLectura.isConnected()){
+            try {
+                Paquete = (Mensaje)OIS.readObject();
+            } catch (IOException ex) {
+                //Fallo conexion
+            } catch (ClassNotFoundException ex) {
+                //Error de codigo
+            }
+            Valor = Paquete.getOperacion();
+            switch(Valor){
+                case"SOLICITAR CONEXION":
+                    cambioPuerto(Paquete.getMensaje());
+                break;
+                case"LOGIN":
+                break;
+                case"SIGNUP":
+                break;
+                case"EXISTE USUARIO":
+                break;
+                case"AGREGAR AMIGO":
+                break;
+                case"ELIMINAR GRUPO":
+                break;
+                case"MODIFICAR GRUPO":
+                break;
+            }
+        }
     }
-    
-    public synchronized void Leyendo()
+    void cambioPuerto(String Port){
+        int Puerto = Integer.parseInt(Port);
+        
+    }
+    /*public synchronized void Leyendo()
     {
         try 
         {
@@ -53,5 +81,5 @@ public class ClienteHiloLectura implements Runnable
         {
             System.out.println("Fallo en Lectura");
         }
-    }
+    }*/
 }

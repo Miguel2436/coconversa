@@ -5,24 +5,24 @@
  */
 package clientes;
 
+import datos.IntegrantesGrupo;
 import datos.Mensaje;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+
 
 /**
  *
  * @author Dogo
  */
-public class ClienteHiloEscritura implements Runnable {
+public class ClienteHiloEscritura{
 
-    Socket clientesSocketEscritura; 
-    ObjectOutputStream OOS;
+   private Socket clientesSocketEscritura; 
+   private ObjectOutputStream OOS;
    public ClienteHiloEscritura (){
    
    }
@@ -32,7 +32,7 @@ public class ClienteHiloEscritura implements Runnable {
         this.OOS = OOS;
    }
     
-    @Override
+    /*@Override
     public void run()
     {
         String texto = "";
@@ -61,6 +61,19 @@ public class ClienteHiloEscritura implements Runnable {
         {
             System.out.println("Fallo en Escritura");  
         }
+    }**/
+    public  void solicitarConexion(String serverIp)
+    {
+        Mensaje conexion= new Mensaje();
+        conexion.setOperacion("SOLICITAR CONEXION");
+        conexion.setDestinatario(serverIp); //¿Cambiar a Destinatario?
+        try{
+           
+            OOS.writeObject(conexion);
+           
+        }catch (IOException ex) {
+           
+        }
     }
     public synchronized void logIn(String Username,String Pass){
         Mensaje log = new Mensaje();
@@ -70,15 +83,10 @@ public class ClienteHiloEscritura implements Runnable {
         log.setMensaje(Pass);
         try {
             localIp = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException ex){
-           localIp = "0.0.0.0";
-           //Como mandar error vista
-        }
-        log.setRemitente(localIp);
-        try{
-           synchronized (OOS){
+            log.setRemitente(localIp);
             OOS.writeObject(log);
-           }
+        } catch (UnknownHostException ex){
+           //Como mandar error vista?
         }catch (IOException ex) {
            //¿Como mandar error a vista?
         }
@@ -89,12 +97,66 @@ public class ClienteHiloEscritura implements Runnable {
         sign.setNombre(Username);
         sign.setMensaje(Pass);
         try{
-           synchronized (OOS){
             OOS.writeObject(sign);
-           }
         }catch (IOException ex) {
            //¿Como mandar error a vista?
         }
     }
-    
+    public  void existeUsuario(String Username)
+    {
+        Mensaje existe = new Mensaje();
+        existe.setOperacion("EXISTE USUARIO");
+        existe.setNombre(Username);
+        try{
+           
+            OOS.writeObject(existe);
+           
+        }catch (IOException ex) {
+         
+        }
+        
+    }
+    public  void agregarAmigo(String Username)
+    {
+        Mensaje agregar = new Mensaje();
+        agregar.setOperacion("AGREGAR AMIGO");
+        agregar.setNombre(Username);
+        try{ 
+            
+            OOS.writeObject(agregar);
+           
+        }catch (IOException ex) {
+         
+        }
+        
+    }
+    public  void eliminarGrupo(String Groupname)
+    {
+        Mensaje eliminar = new Mensaje();
+        eliminar.setOperacion("ELIMINAR GRUPO");
+        eliminar.setNombre(Groupname);
+        try{
+        
+            OOS.writeObject(eliminar);
+           
+        }catch (IOException ex) {
+         
+        }
+        
+    }
+    public void modificarGrupo(String Groupname, List<IntegrantesGrupo> listaIntegrantesGrupo)
+    {
+        Mensaje modificar = new Mensaje();
+        modificar.setOperacion("MODIFICAR GRUPO");
+        modificar.setNombre(Groupname);
+        modificar.setListaIntegrantesGrupo(listaIntegrantesGrupo);
+        try{
+            
+            OOS.writeObject(modificar);
+          
+        }catch (IOException ex) {
+         
+        }
+        
+    }
 }

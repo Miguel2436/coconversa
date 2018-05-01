@@ -19,17 +19,23 @@ public class Clientes {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
+        //Vista Conexion
         Scanner cin = new Scanner(System.in);
         String ipServidor="192.168.77.200";
-        Socket clienteSocket = new Socket(ipServidor,1234);
-        Thread hiloEscritura, hiloLectura;
+        //
+        Socket clienteSocket = new Socket(ipServidor,1000);
         ObjectOutputStream OOS =(ObjectOutputStream) clienteSocket.getOutputStream();
-        hiloEscritura = new Thread(new ClienteHiloEscritura(clienteSocket,OOS));
-        hiloLectura = new Thread(new ClienteHiloLectura(clienteSocket));
         
-        hiloEscritura.start();
+        Thread hiloLectura;
+        hiloLectura = new Thread(new ClienteHiloLectura(clienteSocket));
         hiloLectura.start();
-        // TODO code application logic here
+        
+        ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket,OOS);
+        Escritura.solicitarConexion(ipServidor);
+        //
+        
+        
+       
     }
     
 }
