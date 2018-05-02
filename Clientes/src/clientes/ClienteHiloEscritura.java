@@ -81,6 +81,96 @@ public class ClienteHiloEscritura{
            
         }
     }
+     public void solicitarGrupo(String GroupName){
+        Mensaje SGrupo= new Mensaje();
+        SGrupo.setOperacion("SOLICITAR GRUPO");
+        SGrupo.setNombre(GroupName);
+        try{
+            OOS.writeObject(SGrupo);
+           
+        }catch(IOException ex){
+            
+           
+        }
+        
+    }
+    public void SolicitarAmigo (String Username){
+        Mensaje SAmigo= new Mensaje();
+        SAmigo.setOperacion("SOLICITAR AMIGO");
+        SAmigo.setNombre(Username);
+        try{
+            OOS.writeObject(SAmigo);
+        }catch(IOException ex){
+            
+        }
+        
+    }
+    public void AceptarAmigo (String Username){
+        Mensaje aAmigo= new Mensaje();
+        aAmigo.setOperacion("ACEPTAR AMIGO");
+        aAmigo.setNombre(Username);
+        try{
+            OOS.writeObject(aAmigo);
+            
+        }catch(IOException ex){
+            
+        }
+    }
+    public synchronized void logIn(String Username,String Pass){
+        Mensaje log = new Mensaje();
+        String localIp;
+        log.setOperacion("LOGIN");
+        log.setNombre(Username);
+        log.setMensaje(Pass);
+        try {
+            localIp = InetAddress.getLocalHost().getHostAddress();
+            log.setRemitente(localIp);
+            OOS.writeObject(log);
+        } catch (UnknownHostException ex){
+           //Como mandar error vista?
+        }catch (IOException ex) {
+           //¿Como mandar error a vista?
+        }
+    }
+    public synchronized void signUp(String Username,String Pass){
+        Mensaje sign = new Mensaje();
+        sign.setOperacion("SIGNUP");
+        sign.setNombre(Username);
+        sign.setMensaje(Pass);
+        try{
+            OOS.writeObject(sign);
+        }catch (IOException ex) {
+           //¿Como mandar error a vista?
+        }
+    }
+    public  void existeUsuario(String Username)
+    {
+        Mensaje existe = new Mensaje();
+        existe.setOperacion("EXISTE USUARIO");
+        existe.setNombre(Username);
+        try{
+           
+            OOS.writeObject(existe);
+           
+        }catch (IOException ex) {
+         
+        }
+        
+    }
+    public  void agregarAmigo(String Username)
+    {
+        Mensaje agregar = new Mensaje();
+        agregar.setOperacion("AGREGAR AMIGO");
+        agregar.setNombre(Username);
+        try{ 
+            
+            OOS.writeObject(agregar);
+           
+        }catch (IOException ex) {
+         
+        }
+        
+
     public void logIn(String Username,String Pass){
         Mensaje log = new Mensaje();
         String localIp;
