@@ -29,7 +29,7 @@ public class ClienteHiloLectura implements Runnable
    
    public ClienteHiloLectura (Socket socketParametro) throws IOException{
         this.clientesSocketLectura = socketParametro;
-        this.OIS = (ObjectInputStream)socketParametro.getInputStream();
+        this.OIS = new  ObjectInputStream (socketParametro.getInputStream());
         Paquete = new Mensaje();
    }
 
@@ -39,28 +39,25 @@ public class ClienteHiloLectura implements Runnable
         while(clientesSocketLectura.isConnected()){
             try {
                 Paquete = (Mensaje)OIS.readObject();
+                Valor = Paquete.getOperacion();
+                switch(Valor){
+                    case"LOGIN":
+                    break;
+                    case"SIGNUP":
+                    break;
+                    case"EXISTE_USUARIO":
+                    break;
+                    case"AGREGAR_AMIGO":
+                    break;
+                    case"ELIMINAR_GRUPO":
+                    break;
+                    case"MODIFICAR_GRUPO":
+                    break;
+                }
             } catch (IOException ex) {
-                //Fallo conexion
+                //Fallo conexion Server,mandar mensaje error y reiniciar 
             } catch (ClassNotFoundException ex) {
                 //Error de codigo
-            }
-            Valor = Paquete.getOperacion();
-            switch(Valor){
-                case"SOLICITAR CONEXION":
-                    cambioPuerto(Paquete.getMensaje());
-                break;
-                case"LOGIN":
-                break;
-                case"SIGNUP":
-                break;
-                case"EXISTE USUARIO":
-                break;
-                case"AGREGAR AMIGO":
-                break;
-                case"ELIMINAR GRUPO":
-                break;
-                case"MODIFICAR GRUPO":
-                break;
             }
         }
     }

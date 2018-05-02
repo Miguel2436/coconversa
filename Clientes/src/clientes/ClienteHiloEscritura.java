@@ -5,6 +5,7 @@
  */
 package clientes;
 
+import datos.Amistad;
 import datos.IntegrantesGrupo;
 import datos.Mensaje;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -27,9 +30,12 @@ public class ClienteHiloEscritura{
    
    }
    
-   public ClienteHiloEscritura (Socket socketParametro, ObjectOutputStream OOS){
+   public ClienteHiloEscritura (Socket socketParametro){
         this.clientesSocketEscritura=socketParametro;
-        this.OOS = OOS;
+       try {
+           this.OOS = new ObjectOutputStream(clientesSocketEscritura.getOutputStream());
+       } catch (IOException ex) {
+       }
    }
     
     /*@Override
@@ -65,7 +71,7 @@ public class ClienteHiloEscritura{
     public  void solicitarConexion(String serverIp)
     {
         Mensaje conexion= new Mensaje();
-        conexion.setOperacion("SOLICITAR CONEXION");
+        conexion.setOperacion("SOLICITAR_CONEXION");
         conexion.setDestinatario(serverIp); //¿Cambiar a Destinatario?
         try{
            
@@ -75,7 +81,7 @@ public class ClienteHiloEscritura{
            
         }
     }
-    public synchronized void logIn(String Username,String Pass){
+    public void logIn(String Username,String Pass){
         Mensaje log = new Mensaje();
         String localIp;
         log.setOperacion("LOGIN");
@@ -105,7 +111,7 @@ public class ClienteHiloEscritura{
     public  void existeUsuario(String Username)
     {
         Mensaje existe = new Mensaje();
-        existe.setOperacion("EXISTE USUARIO");
+        existe.setOperacion("EXISTE_USUARIO");
         existe.setNombre(Username);
         try{
            
@@ -119,7 +125,7 @@ public class ClienteHiloEscritura{
     public  void agregarAmigo(String Username)
     {
         Mensaje agregar = new Mensaje();
-        agregar.setOperacion("AGREGAR AMIGO");
+        agregar.setOperacion("AGREGAR_AMIGO");
         agregar.setNombre(Username);
         try{ 
             
@@ -133,7 +139,7 @@ public class ClienteHiloEscritura{
     public  void eliminarGrupo(String Groupname)
     {
         Mensaje eliminar = new Mensaje();
-        eliminar.setOperacion("ELIMINAR GRUPO");
+        eliminar.setOperacion("ELIMINAR_GRUPO");
         eliminar.setNombre(Groupname);
         try{
         
@@ -147,7 +153,7 @@ public class ClienteHiloEscritura{
     public void modificarGrupo(String Groupname, List<IntegrantesGrupo> listaIntegrantesGrupo)
     {
         Mensaje modificar = new Mensaje();
-        modificar.setOperacion("MODIFICAR GRUPO");
+        modificar.setOperacion("MODIFICAR_GRUPO");
         modificar.setNombre(Groupname);
         modificar.setListaIntegrantesGrupo(listaIntegrantesGrupo);
         try{
@@ -161,13 +167,13 @@ public class ClienteHiloEscritura{
     }
    
       //Método de aagregarAmigo que se lleva Nombre y Remitente (Ya hay una función pre-existente arriba por Dogo)
-   public void aagregarAmigo(String Username,String Remiente)
+   public void respuestaUsuario(String Username,String Remiente,boolean respuesta)
     {
         Mensaje add = new Mensaje();
         add.setOperacion("AGREGAR_AMIGO");
         add.setNombre(Username);
         add.setRemitente(Remiente);
-        
+        add.setEstado(respuesta);
         try
         {
             OOS.writeObject(add);
@@ -198,6 +204,7 @@ public class ClienteHiloEscritura{
       try
         {
             OOS.writeObject(cGroup);
-        }catch(IOException ex){}
+        }catch(IOException ex){
+        }
     }
 }
