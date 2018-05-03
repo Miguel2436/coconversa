@@ -83,7 +83,7 @@ public class ClienteHiloEscritura{
     }
      public void solicitarGrupo(String GroupName){
         Mensaje SGrupo= new Mensaje();
-        SGrupo.setOperacion("SOLICITAR GRUPO");
+        SGrupo.setOperacion("SOLICITAR_GRUPO");
         SGrupo.setNombre(GroupName);
         try{
             OOS.writeObject(SGrupo);
@@ -96,7 +96,7 @@ public class ClienteHiloEscritura{
     }
     public void SolicitarAmigo (String Username){
         Mensaje SAmigo= new Mensaje();
-        SAmigo.setOperacion("SOLICITAR AMIGO");
+        SAmigo.setOperacion("SOLICITAR_AMIGO");
         SAmigo.setNombre(Username);
         try{
             OOS.writeObject(SAmigo);
@@ -107,7 +107,7 @@ public class ClienteHiloEscritura{
     }
     public void AceptarAmigo (String Username){
         Mensaje aAmigo= new Mensaje();
-        aAmigo.setOperacion("ACEPTAR AMIGO");
+        aAmigo.setOperacion("ACEPTAR_AMIGO");
         aAmigo.setNombre(Username);
         try{
             OOS.writeObject(aAmigo);
@@ -146,7 +146,7 @@ public class ClienteHiloEscritura{
     public  void existeUsuario(String Username)
     {
         Mensaje existe = new Mensaje();
-        existe.setOperacion("EXISTE USUARIO");
+        existe.setOperacion("EXISTE_USUARIO");
         existe.setNombre(Username);
         try{
            
@@ -160,7 +160,7 @@ public class ClienteHiloEscritura{
     public  void agregarAmigo(String Username)
     {
         Mensaje agregar = new Mensaje();
-        agregar.setOperacion("AGREGAR AMIGO");
+        agregar.setOperacion("AGREGAR_AMIGO");
         agregar.setNombre(Username);
         try{ 
             
