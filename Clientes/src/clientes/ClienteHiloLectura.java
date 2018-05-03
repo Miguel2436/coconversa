@@ -61,10 +61,6 @@ public class ClienteHiloLectura implements Runnable
             }
         }
     }
-    void cambioPuerto(String Port){
-        int Puerto = Integer.parseInt(Port);
-        
-    }
     /*public synchronized void Leyendo()
     {
         try 

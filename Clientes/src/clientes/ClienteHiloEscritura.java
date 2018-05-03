@@ -38,41 +38,19 @@ public class ClienteHiloEscritura{
        }
    }
     
-    /*@Override
-    public void run()
-    {
-        String texto = "";
-        do
-        {
-           Scanner cin = new Scanner(System.in);     
-           texto = cin.nextLine();
-           escribiendo(texto);
-           //logIn(Username,Pass);
-           //signUp(Username,Pass);
-        }while(texto.compareTo("adios")!=0);
-    }
-    
-    
-    public synchronized void escribiendo(String texto)
-    {
-        Mensaje men = new Mensaje();
-        men.setOperacion("MENSAJE");
-        men.setMensaje(texto);
-        try
-        {
-            synchronized(OOS){
-                OOS.writeObject(men);
-            }
-        } catch (IOException ex) 
-        {
-            System.out.println("Fallo en Escritura");  
-        }
-    }**/
+   
+   
+   ////Funciones de conexion
+   /**
+    * Funcion para conectarse al servidor y que el servidor genere un socket específico
+    * para la conexion de este cliente
+    * @param serverIp Ip del servidor
+    */
     public  void solicitarConexion(String serverIp)
     {
         Mensaje conexion= new Mensaje();
         conexion.setOperacion("SOLICITAR_CONEXION");
-        conexion.setDestinatario(serverIp); //¿Cambiar a Destinatario?
+        conexion.setDestinatario(serverIp);
         try{
            
             OOS.writeObject(conexion);
@@ -81,96 +59,11 @@ public class ClienteHiloEscritura{
            
         }
     }
-     public void solicitarGrupo(String GroupName){
-        Mensaje SGrupo= new Mensaje();
-        SGrupo.setOperacion("SOLICITAR_GRUPO");
-        SGrupo.setNombre(GroupName);
-        try{
-            OOS.writeObject(SGrupo);
-           
-        }catch(IOException ex){
-            
-           
-        }
-        
-    }
-    public void SolicitarAmigo (String Username){
-        Mensaje SAmigo= new Mensaje();
-        SAmigo.setOperacion("SOLICITAR_AMIGO");
-        SAmigo.setNombre(Username);
-        try{
-            OOS.writeObject(SAmigo);
-        }catch(IOException ex){
-            
-        }
-        
-    }
-    public void AceptarAmigo (String Username){
-        Mensaje aAmigo= new Mensaje();
-        aAmigo.setOperacion("ACEPTAR_AMIGO");
-        aAmigo.setNombre(Username);
-        try{
-            OOS.writeObject(aAmigo);
-            
-        }catch(IOException ex){
-            
-        }
-    }
-    public synchronized void logIn(String Username,String Pass){
-        Mensaje log = new Mensaje();
-        String localIp;
-        log.setOperacion("LOGIN");
-        log.setNombre(Username);
-        log.setMensaje(Pass);
-        try {
-            localIp = InetAddress.getLocalHost().getHostAddress();
-            log.setRemitente(localIp);
-            OOS.writeObject(log);
-        } catch (UnknownHostException ex){
-           //Como mandar error vista?
-        }catch (IOException ex) {
-           //¿Como mandar error a vista?
-        }
-    }
-    public synchronized void signUp(String Username,String Pass){
-        Mensaje sign = new Mensaje();
-        sign.setOperacion("SIGNUP");
-        sign.setNombre(Username);
-        sign.setMensaje(Pass);
-        try{
-            OOS.writeObject(sign);
-        }catch (IOException ex) {
-           //¿Como mandar error a vista?
-        }
-    }
-    public  void existeUsuario(String Username)
-    {
-        Mensaje existe = new Mensaje();
-        existe.setOperacion("EXISTE_USUARIO");
-        existe.setNombre(Username);
-        try{
-           
-            OOS.writeObject(existe);
-           
-        }catch (IOException ex) {
-         
-        }
-        
-    }
-    public  void agregarAmigo(String Username)
-    {
-        Mensaje agregar = new Mensaje();
-        agregar.setOperacion("AGREGAR_AMIGO");
-        agregar.setNombre(Username);
-        try{ 
-            
-            OOS.writeObject(agregar);
-           
-        }catch (IOException ex) {
-         
-        }
-        
-
+    /**
+     * Funcion para ingresar a sistema
+     * @param Username Usuario del cliente
+     * @param Pass contraseña del cliente
+     */
     public void logIn(String Username,String Pass){
         Mensaje log = new Mensaje();
         String localIp;
@@ -187,7 +80,12 @@ public class ClienteHiloEscritura{
            //¿Como mandar error a vista?
         }
     }
-    public synchronized void signUp(String Username,String Pass){
+    /**
+     * Funcion para registrarse en el sistema
+     * @param Username Usuario de l sistema
+     * @param Pass Contraseña del usuario
+     */
+    public void signUp(String Username,String Pass){
         Mensaje sign = new Mensaje();
         sign.setOperacion("SIGNUP");
         sign.setNombre(Username);
@@ -198,20 +96,13 @@ public class ClienteHiloEscritura{
            //¿Como mandar error a vista?
         }
     }
-    public  void existeUsuario(String Username)
-    {
-        Mensaje existe = new Mensaje();
-        existe.setOperacion("EXISTE_USUARIO");
-        existe.setNombre(Username);
-        try{
-           
-            OOS.writeObject(existe);
-           
-        }catch (IOException ex) {
-         
-        }
-        
-    }
+    /////////////////////////
+    ///Funciones de Usuario//
+    /////////////////////////
+    /**
+     * Genera una solicitud de amistad al usuario que se le envie.
+     * @param Username Nombre de usuario al que se desea agregar.
+     */
     public  void agregarAmigo(String Username)
     {
         Mensaje agregar = new Mensaje();
@@ -226,20 +117,84 @@ public class ClienteHiloEscritura{
         }
         
     }
-    public  void eliminarGrupo(String Groupname)
+    /**
+     * Funcion para aceptar o recharzar una solicitud de amistad previamente realizada
+     * por otro cliente
+     * @param username Nombre de Usuario
+     * @param amigo Nombre del usuario que espera la respuesta
+     * @param respuesta Respuesta de amistad True = Aceptado, False = No Aceptado
+     */
+    public void respuestaAmigo(String username,String amigo,boolean respuesta)
     {
-        Mensaje eliminar = new Mensaje();
-        eliminar.setOperacion("ELIMINAR_GRUPO");
-        eliminar.setNombre(Groupname);
-        try{
-        
-            OOS.writeObject(eliminar);
-           
-        }catch (IOException ex) {
-         
-        }
-        
+        Mensaje add = new Mensaje();
+        add.setOperacion("RESPUESTA_AMIGO");
+        add.setRemitente(username);
+        add.setDestinatario(amigo);
+        add.setEstado(respuesta);
+        try
+        {
+            OOS.writeObject(add);
+        }catch(IOException ex){}
     }
+     
+    /**
+     * Elimina de tu lista de amigos el usuario que sea ingresado
+     * @param amigo usuario a eliminar de amistad
+     * @param Usuario usuario que desea eliminar algun amigo
+     */
+    public void eliminarAmigo(String Usuario,String amigo)
+    {
+      Mensaje remove = new Mensaje();
+      remove.setOperacion("ELIMINAR_AMIGO");
+      remove.setNombre(amigo);
+      remove.setRemitente(Usuario);
+      
+      try
+        {
+            OOS.writeObject(remove);
+        }catch(IOException ex){}
+    }
+    /**
+     * Manda solicitud para que el servidor responda con la lista de amigos que
+     * el usuario
+     * conectados y amigos desconectados.
+     * @param Usuario usuario que desea ver su lista de amigos
+     */
+    public void verAmigos(String Usuario)
+    {
+      Mensaje remove = new Mensaje();
+      remove.setOperacion("VER_AMIGOS");      
+      try
+        {
+            OOS.writeObject(remove);
+        }catch(IOException ex){}
+    }
+    
+    ///////////////////////
+    //Funciones de Grupo//
+    //////////////////////
+    /**
+     * Funcion que crea un Grupo de chat
+     * @param Name Nombre del grupo a crear
+     * @param Amigos Lista de amigos que serán agregados al grupo
+     */
+    public void crearGrupo(String Name, List<Amistad> Amigos)
+    {
+      Mensaje cGroup = new Mensaje();
+      cGroup.setOperacion("CREAR_GRUPO");
+      cGroup.setNombre(Name);
+      cGroup.setListaAmistades(Amigos);
+      try
+        {
+            OOS.writeObject(cGroup);
+        }catch(IOException ex){
+        }
+    }
+    /**
+     * Modifica los integrantes del grupo enviado
+     * @param Groupname Nombre de grupo a modificar
+     * @param listaIntegrantesGrupo Lista de Integrantes de grupo actualizada
+     */
     public void modificarGrupo(String Groupname, List<IntegrantesGrupo> listaIntegrantesGrupo)
     {
         Mensaje modificar = new Mensaje();
@@ -254,47 +209,69 @@ public class ClienteHiloEscritura{
          
         }
         
-    }
-   
-      //Método de aagregarAmigo que se lleva Nombre y Remitente (Ya hay una función pre-existente arriba por Dogo)
-   public void respuestaUsuario(String Username,String Remiente,boolean respuesta)
+    }/**
+     * Elimina grupo específico
+     * @param Groupname  Nombre de grupo a eliminar
+     */
+    public  void eliminarGrupo(String Groupname)
     {
-        Mensaje add = new Mensaje();
-        add.setOperacion("AGREGAR_AMIGO");
-        add.setNombre(Username);
-        add.setRemitente(Remiente);
-        add.setEstado(respuesta);
-        try
-        {
-            OOS.writeObject(add);
-        }catch(IOException ex){}
+        Mensaje eliminar = new Mensaje();
+        eliminar.setOperacion("ELIMINAR_GRUPO");
+        eliminar.setNombre(Groupname);
+        try{
+        
+            OOS.writeObject(eliminar);
+           
+        }catch (IOException ex) {
+         
+        }
+        
     }
-     
-     //Método de eliminarAmigo que se lleva Nombre
-    public void eliminarAmigo(String Username)
-    {
-      Mensaje remove = new Mensaje();
-      remove.setOperacion("ELIMINAR_AMIGO");
-      remove.setNombre("Username");
-      
-      try
-        {
-            OOS.writeObject(remove);
-        }catch(IOException ex){}
-    }
-    
-        //Método de crearGrupo que se lleva Nombre y setListaAmistades
-    public void crearGrupo(String Name, List<Amistad> Amigos)
-    {
-      Mensaje cGroup = new Mensaje();
-      cGroup.setOperacion("CREAR_GRUPO");
-      cGroup.setNombre(Name);
-      cGroup.setListaAmistades(Amigos);
-     
-      try
-        {
-            OOS.writeObject(cGroup);
+    /**
+     * Pide al servidor que retorne la lista de usuarios de un grupo específico
+     * @param GroupName Nombre de grupo a pedir integrantes de grupo
+     * @param Usuario Nombre usuario que desea ver integrantes grupo
+     */
+    public void verUsuariosGrupo(String GroupName, String Usuario){
+        Mensaje SGrupo= new Mensaje();
+        SGrupo.setOperacion("VER_USUARIOS_GRUPO");
+        SGrupo.setNombre(GroupName);
+        SGrupo.setRemitente(Usuario);
+                
+        try{
+            OOS.writeObject(SGrupo);
         }catch(IOException ex){
         }
+    }
+    
+    /**
+     * Pide al servidor que le liste los grupos a los que pertenece el usuario
+     * @param Usuario Usuario que desea ver a que grupos pertenece.
+     */
+    public void verGrupos(String Usuario){
+        Mensaje SGrupo= new Mensaje();
+        SGrupo.setOperacion("VER_GRUPOS");
+        try{
+            OOS.writeObject(SGrupo);
+        }catch(IOException ex){
+        }
+    }
+    
+    //////////////////////
+    //Funciones Busqueda//
+    /////////////////////
+    public  void existeUsuario(String Username)
+    {
+        Mensaje existe = new Mensaje();
+        existe.setOperacion("EXISTE_USUARIO");
+        existe.setNombre(Username);
+        try{
+           
+            OOS.writeObject(existe);
+           
+        }catch (IOException ex) {
+         
+        }
+        
     }
 }
