@@ -5,11 +5,19 @@
  */
 package server;
 
+import com.sun.corba.se.impl.io.IIOPOutputStream;
+import datos.Conexion;
 import datos.Mensaje;
+import datos.Usuario;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,57 +26,99 @@ import java.net.Socket;
 public class HiloLectura extends Thread{
 
     ServerSocket socket;
-    public HiloLectura(ServerSocket socket) {
+    Escritura escritura;
+    private HashMap<String, Socket> conexiones;
+    public HiloLectura(ServerSocket socket, HashMap<String, Socket> conexiones) {
         this.socket = socket;
+        escritura = new Escritura();
+        this.conexiones = conexiones;
     }
     @Override
     public void run() {
         try {
             Socket lectura = socket.accept();
+            System.out.println("Conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort() + " hecha desde el puerto: " + lectura.getLocalPort());
             leerSocket(lectura);                                          
         } catch (IOException ex) {
             System.out.println("Error conectando con cliente: " + ex.getMessage());
         }
     }
-    public void leerSocket(Socket lectura) {
+    public void leerSocket(Socket lectura) throws IOException {
         
         Mensaje mensaje;
-        while (1 == 1) {
+        while (!lectura.isClosed()) {
             try {
+                ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
                 ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
                 mensaje = (Mensaje) ois.readObject();
+                Usuario usuario;
                 switch (mensaje.getOperacion()) {
                     case "LOGIN":
+                        usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());      
+                        mensaje = new Mensaje();
+                        mensaje.setOperacion("LOGIN");
+                        try {
+                            escritura.logIn(usuario);
+                            mensaje.setEstado(true);
+                        } catch (SQLException ex) {
+                            mensaje.setEstado(false);
+                        }
+                        oos.writeObject(mensaje);
                         break;
                     case "SIGNUP":
+                        usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
+                        Conexion conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());                
+                        mensaje = new Mensaje();
+                        mensaje.setOperacion("SIGNUP");
+                        try {
+                            escritura.RegistroUsuario(usuario, conexion);
+                            mensaje.setEstado(true);
+                        } catch (SQLException ex) {
+                            mensaje.setEstado(false);
+                        }
+                        oos.writeObject(mensaje);
                         break;
-                    case "EXISTEUSUARIO":
+                    case "EXISTE_USUARIO":
                         break;
-                    case "AGREGARAMIGO":
+                    case "AGREGAR_AMIGO":
                         break;
-                    case "ELIMINARAMIGO":
+                    case "ELIMINAR_AMIGO":
                         break;
-                    case "CREARGRUPO":
+                    case "CREAR_GRUPO":
                         break;
-                    case "ELIMINARGRUPO":
+                    case "ELIMINAR_GRUPO":
                         break;
-                    case "MODIFICARGRUPO":
+                    case "MODIFICAR_GRUPO":
                         break;
-                    case "SOLICITARAMIGOS":
+                    case "SOLICITAR_AMIGOS":
                         break;
-                    case "SOLICITARGRUPOS":
+                    case "SOLICITAR_GRUPOS":
                         break;
-                    case "ACEPTARAMIGO":
+                    case "ACEPTAR_AMIGO":
                         break;
-                    case "CERRARSESION":
+                    case "CERRAR_SESION":
                         break;
-                    case "":
+                    case "MENSAJE":
+                        Socket SD = conexiones.get(mensaje.getDestinatario());
+                        synchronized (SD) {
+                            ObjectOutputStream oosSD = new ObjectOutputStream(SD.getOutputStream());
+                            
+                        }
+                        break;
+                    case "MENSAJE_A_GRUPO":
+                        break;
+                    case "GET_MENSAJES":
+                        break;
+                    case "GET_MENSAJES_GRUPO":
                         break;
                     default:
+                        
                         break;
                 }
             } catch (IOException ex) {
                 System.out.println("Error leyendo: " + ex.getMessage());
+                System.out.println("Termina conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort());
+                lectura.close();                
             } catch (ClassNotFoundException ex) {
                 System.out.println("Error al encontrar la clase:" + ex.getMessage());
             }

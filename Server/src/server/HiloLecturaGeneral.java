@@ -5,6 +5,7 @@
  */
 package server;
 
+import com.sun.corba.se.impl.io.IIOPOutputStream;
 import datos.Mensaje;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -21,9 +22,9 @@ import java.util.HashMap;
 public class HiloLecturaGeneral extends Thread{
     private ServerSocket serverSocket;
     private int socket;
-    private HashMap<String, ServerSocket> conexiones;
+    private HashMap<String, ObjectOutputStream> conexiones;
     
-    public HiloLecturaGeneral (int socket, HashMap<String, ServerSocket> conexiones) throws IOException{
+    public HiloLecturaGeneral (int socket, HashMap<String, ObjectOutputStream> conexiones) throws IOException{
         this.socket = socket;
         this.conexiones = conexiones;
         serverSocket = new ServerSocket(socket);
@@ -51,7 +52,7 @@ public class HiloLecturaGeneral extends Thread{
                 System.out.println("Error al encontrar la clase: " + ex.getMessage());
             }
             try {
-                serverSocket.close();
+                lectura.close();
                 System.out.println("Conexion con " + direccionCliente.toString() + ":" + puertoCliente + " finalizada");
             } catch (IOException ex) {
                 System.out.println("Error al cerrar el socket: " + ex.getMessage());
@@ -64,22 +65,24 @@ public class HiloLecturaGeneral extends Thread{
         Mensaje mensaje;
         mensaje = (Mensaje) ois.readObject();    
         
-        if (mensaje.getOperacion().equals("SOLICITARCONEXION")){
+        if (mensaje.getOperacion().equals("SOLICITAR_CONEXION")){
             ServerSocket puerto = new ServerSocket(0);
+            ObjectOutputStream oosTemp = new 
             synchronized (conexiones) {
-                conexiones.put(direccionCliente, puerto);
+                conexiones.put(direccionCliente, puerto.accept());
             }
             
             ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
             mensaje = new Mensaje();
-            mensaje.setOperacion("SOLICITARCONEXION");
+            mensaje.setOperacion("SOLICITAR_CONEXION");
             mensaje.setEstado(true);
             Integer puertoLocal = puerto.getLocalPort();            
             mensaje.setMensaje(puertoLocal.toString());
             oos.writeObject(mensaje);
             
-            Thread nuevoHiloLectura = new HiloLectura(puerto);
+            Thread nuevoHiloLectura = new HiloLectura(puerto, conexiones);
             nuevoHiloLectura.start();
+            
             //Thread nuevoHiloEscritura = new HiloEscritura(puerto);
             //nuevoHiloEscritura.start();
         }
