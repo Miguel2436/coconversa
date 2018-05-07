@@ -67,9 +67,9 @@ public class HiloLecturaGeneral extends Thread{
         
         if (mensaje.getOperacion().equals("SOLICITAR_CONEXION")){
             ServerSocket puerto = new ServerSocket(0);
-            ObjectOutputStream oosTemp = new 
+            ObjectOutputStream oosTemp = new ObjectOutputStream(puerto.accept().getOutputStream());
             synchronized (conexiones) {
-                conexiones.put(direccionCliente, puerto.accept());
+                conexiones.put(direccionCliente, oosTemp);
             }
             
             ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
@@ -80,7 +80,7 @@ public class HiloLecturaGeneral extends Thread{
             mensaje.setMensaje(puertoLocal.toString());
             oos.writeObject(mensaje);
             
-            Thread nuevoHiloLectura = new HiloLectura(puerto, conexiones);
+            Thread nuevoHiloLectura = new HiloLectura(puerto, conexiones, oosTemp);
             nuevoHiloLectura.start();
             
             //Thread nuevoHiloEscritura = new HiloEscritura(puerto);

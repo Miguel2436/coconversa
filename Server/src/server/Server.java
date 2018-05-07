@@ -6,6 +6,7 @@
 package server;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  * @author Leonardo Martinez
  */
 public class Server {
-    public static HashMap<String, ServerSocket> conexiones = new HashMap<>();
+    public static HashMap<String, ObjectOutputStream> conexiones = new HashMap<>();
     /**
      * @param args the command line arguments
      */
