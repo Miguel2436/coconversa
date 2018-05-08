@@ -58,6 +58,7 @@ public class ClienteHiloLectura implements Runnable
                             LogIn.setVisible(true);
                         }
                     break;
+                    
                     case"SIGNUP":
                         if(Paquete.isEstado()){
                             FormUsuarioRegistrado UsuarioRegistrado = new FormUsuarioRegistrado();
