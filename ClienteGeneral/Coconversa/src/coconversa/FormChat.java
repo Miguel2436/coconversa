@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import static javax.swing.BoxLayout.X_AXIS;
@@ -19,7 +21,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class FormChat extends JFrame
+public class FormChat extends JFrame implements ActionListener
 {
    //---------PANEL CONVERSACIÓN----------------------------------------------
     private JTextField txtMensajesChat;
@@ -307,5 +309,13 @@ public class FormChat extends JFrame
         );
         this.setLayout(contentPane);
         this.pack();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+         if(ae.getSource()== btnSalirChat){
+             this.setVisible(false);
+             System.exit(0);
+         }
     }
 }

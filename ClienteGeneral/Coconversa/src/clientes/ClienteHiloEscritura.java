@@ -290,7 +290,6 @@ public class ClienteHiloEscritura{
             OOS.writeObject(existe);
            
         }catch (IOException ex) {
-         
         }
         
     }
