@@ -228,6 +228,13 @@ public class HiloLectura extends Thread{
                         default:
                             break;
                     }
+                    usuario = new Usuario(nombreUsuario, "");
+                    try {     
+                        escritura.notificacionesAmistad(usuario);
+                    } 
+                    catch(SQLException ex){
+                        mensaje.setEstado(false);
+                    }
                     oos.writeObject(mensaje);
                 } catch (IOException ex) {
                     System.out.println("Error leyendo: " + ex.getMessage());
@@ -236,18 +243,6 @@ public class HiloLectura extends Thread{
                 } catch (ClassNotFoundException ex) {
                     System.out.println("Error al encontrar la clase:" + ex.getMessage());
                 }
-                
-                Usuario usuario = new Usuario(nombreUsuario, "");
-                mensaje = new Mensaje();
-                try {     
-                    escritura.notificacionesAmistad(usuario);
-                } 
-                catch(SQLException ex){
-                    mensaje.setEstado(false);
-                }
-                
-                
-                
             }
         }
     }
