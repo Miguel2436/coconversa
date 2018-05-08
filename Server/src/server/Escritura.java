@@ -2,6 +2,9 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package server;
 
@@ -129,7 +132,36 @@ public class Escritura {
             rs.first();
             do 
             {
-                Usuario x = new Usuario (rs.getString("Nombre"), rs.getString("Password"));
+                Usuario x = new Usuario (rs.getString("Nombre"), "");
+                lista.add(x);
+            } while (rs.next());  
+        return lista;
+    }
+    
+    public List<Usuario> SolicitarAmigosDesconectados (Usuario u) throws SQLException
+    {
+        List<Usuario> lista = new ArrayList<>();
+       
+        sql = conexion.prepareStatement
+           ("SELECT usuario.Nombre, usuario.Password FROM usuario, conexion, amistad WHERE (" +
+                "usuario.Nombre = (" +
+                "SELECT amistad.Solicitado WHERE amistad.Solicitante = '" + u.getNombre() + 
+                "' AND amistad.Solicitado = (" +
+                "SELECT amistad.Solicitado WHERE amistad.Solicitado = conexion.Usuario "
+                + "AND conexion.Estado = false)" +
+                "AND amistad.Estado = true)" +
+                "OR usuario.Nombre = (" +
+                "SELECT amistad.Solicitante WHERE amistad.Solicitado = '" + u.getNombre() +
+                "' AND amistad.Solicitante = (" +
+                "SELECT amistad.Solicitante WHERE amistad.Solicitante = conexion.Usuario "
+                + "AND conexion.Estado = false) " +
+                "AND amistad.Estado = true))");
+            ResultSet rs;
+            rs = sql.executeQuery();
+            rs.first();
+            do 
+            {
+                Usuario x = new Usuario (rs.getString("Nombre"), "");
                 lista.add(x);
             } while (rs.next());  
         return lista;
@@ -141,14 +173,15 @@ public class Escritura {
      * @return
      * @throws SQLException 
      */
-    public boolean logIn(Usuario u) throws SQLException
+    public boolean logIn(Usuario u, Conexion c) throws SQLException
     {
         sql=conexion.prepareStatement("SELECT password FROM usuario Where Nombre='"+u.getNombre()+"'");
         rs=sql.executeQuery();
         while(rs.next()==true)
         {
             if(u.getPassword().equals(rs.getString("Password")))
-            {
+            {                
+                sql.executeUpdate("UPDATE Conexion SET Estado = 1, IPaddress = '" + c.getIpAddress() + "' WHERE Usuario = '" + u.getNombre() + "';");
                 return true;
             }else
             {
@@ -289,6 +322,9 @@ public class Escritura {
             + "WHERE amistad.Solicitante = '" + u1.getNombre() + "' AND amistad.Solicitado"
             + "= '" + u2.getNombre() +  "'");
         sql.executeUpdate();           
+    }
+    public void cerrarSesion(Usuario usuario) throws SQLException {
+        sql.executeUpdate("UPDATE conexion SET Estado = 0 WHERE Usuario = '" + usuario.getNombre() + "';");
     }
 }
 

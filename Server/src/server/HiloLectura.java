@@ -52,14 +52,16 @@ public class HiloLectura extends Thread{
                     ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
                     mensaje = (Mensaje) ois.readObject();
                     Usuario usuario;
+                    Conexion conexion;
                     Usuario usuario2;
                     Grupo grupo;
                     switch (mensaje.getOperacion()) {
                         case "LOGIN":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
+                            conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             mensaje.setOperacion("LOGIN");
                             try {
-                                escritura.logIn(usuario);
+                                escritura.logIn(usuario, conexion);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
@@ -67,7 +69,7 @@ public class HiloLectura extends Thread{
                             break;
                         case "SIGNUP":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
-                            Conexion conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
+                            conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             try {
                                 escritura.RegistroUsuario(usuario, conexion);
                                 mensaje.setEstado(true);
@@ -154,6 +156,24 @@ public class HiloLectura extends Thread{
                                 mensaje.setEstado(false);
                             }
                             break;
+                        case "SOLICITAR_AMIGOS_CONECTADOS":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                mensaje.setListaUsuarios(escritura.SolicitarAmigosConectados(usuario));                                
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
+                            break;
+                        case "SOLICITAR_AMIGOS_DESCONECTADOS":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                mensaje.setListaUsuarios(escritura.SolicitarAmigosDesconectados(usuario));                                
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
+                            break;
                         case "SOLICITAR_GRUPOS":
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
@@ -167,7 +187,7 @@ public class HiloLectura extends Thread{
                             usuario = new Usuario(mensaje.getRemitente(), "");
                             usuario2 = new Usuario(mensaje.getDestinatario(), "");
                             try {
-                                escritura.AceptarAmigo(usuario, usuario2);
+                                escritura.AceptarAmigo(usuario2, usuario);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
