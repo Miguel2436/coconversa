@@ -16,11 +16,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -56,12 +52,11 @@ public class HiloLectura extends Thread{
                     ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
                     mensaje = (Mensaje) ois.readObject();
                     Usuario usuario;
+                    Usuario usuario2;
                     Grupo grupo;
-                    List<Usuario> lista;
                     switch (mensaje.getOperacion()) {
                         case "LOGIN":
-                            usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());      
-                            mensaje = new Mensaje();
+                            usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
                             mensaje.setOperacion("LOGIN");
                             try {
                                 escritura.logIn(usuario);
@@ -69,69 +64,74 @@ public class HiloLectura extends Thread{
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
                             break;
                         case "SIGNUP":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
-                            Conexion conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());                
-                            mensaje = new Mensaje();
-                            mensaje.setOperacion("SIGNUP");
+                            Conexion conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             try {
                                 escritura.RegistroUsuario(usuario, conexion);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
                             break;
                         case "EXISTE_USUARIO":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                if (escritura.ExisteUsuario(usuario)) {                                    
+                                    mensaje.setEstado(true);
+                                }
+                                else mensaje.setEstado(false);                                
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "AGREGAR_AMIGO":
-                            break;
-                        case "ELIMINAR_AMIGO":
-                            break;
-                        case "CREAR_GRUPO":
-                            grupo=new Grupo();
-                            lista=new ArrayList<Usuario>();
-                            lista=mensaje.getListaUsuarios();
-                            grupo.setNombre(mensaje.getNombre());
-                            mensaje=new Mensaje();
-                            mensaje.setOperacion("CREAR_GRUPO");
+                            usuario = new Usuario(mensaje.getRemitente(), "");
+                            usuario2 = new Usuario(mensaje.getDestinatario(), "");
                             try {
-                                escritura.crearGrupo(grupo,lista );
+                                escritura.AgregarAmigo(usuario, usuario2);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
+                            break;
+                        case "ELIMINAR_AMIGO":
+                            usuario = new Usuario(mensaje.getRemitente(), "");
+                            usuario2 = new Usuario(mensaje.getDestinatario(), "");
+                            try {
+                                escritura.EliminarAmigo(usuario, usuario2);
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
+                            break;
+                        case "CREAR_GRUPO":
+                            grupo = new Grupo(0, mensaje.getNombre());
+                            try {
+                                escritura.crearGrupo(grupo, mensaje.getListaUsuarios());
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "ELIMINAR_GRUPO":
-                            grupo=new Grupo();
-                            grupo.setNombre(mensaje.getNombre());
-                            mensaje=new Mensaje();
-                            mensaje.setOperacion("ELIMINAR_GRUPO");
+                            grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.eliminarGrupo(grupo);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
                             break;
                         case "MODIFICAR_GRUPO":
-                            grupo=new Grupo();
-                            lista=new ArrayList<Usuario>();
-                            grupo.setIdGrupo(Integer.parseInt(mensaje.getMensaje()));
-                            lista=mensaje.getListaUsuarios();
-                            mensaje=new Mensaje();
-                            mensaje.setOperacion("MODIFICAR_GRUPO");
+                            grupo = new Grupo(0, mensaje.getNombre());
                             try {
-                                escritura.modificarGrupo(lista, grupo);
+                                escritura.modificarGrupo(mensaje.getListaUsuarios(), grupo);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
                             break;
                         case "SOLICITAR_DETALLES_GRUPO":
                             grupo=new Grupo();
@@ -144,24 +144,51 @@ public class HiloLectura extends Thread{
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
-                            oos.writeObject(mensaje);
                             break;
                         case "SOLICITAR_AMIGOS":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                mensaje.setListaUsuarios(escritura.SolicitarAmigos(usuario));
+                                mensaje.setEstado(true);                                
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "SOLICITAR_GRUPOS":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                mensaje.setListaGrupos(escritura.SolicitarGrupos(usuario));
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "ACEPTAR_AMIGO":
+                            usuario = new Usuario(mensaje.getRemitente(), "");
+                            usuario2 = new Usuario(mensaje.getDestinatario(), "");
+                            try {
+                                escritura.AceptarAmigo(usuario, usuario2);
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "CERRAR_SESION":
+                            usuario = new Usuario(mensaje.getNombre(), "");
+                            try {
+                                escritura.cerrarSesion(usuario);    //===============================> Crear funcion en esctritura que pase conexion.estado a falso
+                                mensaje.setEstado(true);
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "MENSAJE":
-                            ObjectOutputStream oosDestinatario= conexiones.get(mensaje.getDestinatario());
+                            ObjectOutputStream oosDestinatario = conexiones.get(mensaje.getDestinatario());
                             mensaje.setOperacion("MENSAJE_NUEVO");
                             synchronized (oosDestinatario) {
                                 oosDestinatario.writeObject(mensaje);
                             }
                             //funcion de guardar mensaje en archivo
-                            mensaje = new Mensaje();
                             mensaje.setOperacion("MENSAJE");
                             mensaje.setEstado(true);
                             oos.writeObject(mensaje);
@@ -176,9 +203,9 @@ public class HiloLectura extends Thread{
                         case "GET_MENSAJES_GRUPO":
                             break;
                         default:
-
                             break;
                     }
+                    oos.writeObject(mensaje);
                 } catch (IOException ex) {
                     System.out.println("Error leyendo: " + ex.getMessage());
                     System.out.println("Termina conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort());
@@ -188,5 +215,10 @@ public class HiloLectura extends Thread{
                 }
             }
         }
-    }    
+    }
 }
+
+            
+        
+       
+
