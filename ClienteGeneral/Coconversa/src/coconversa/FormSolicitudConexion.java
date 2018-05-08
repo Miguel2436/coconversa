@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.JButton;
@@ -46,6 +47,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
         lblIPSolicitudConexion = new JLabel("Escriba la dirección IP del server");
         lblIPSolicitudConexion.setFont(new Font ("Calibri (Cuerpo)", Font.BOLD ,18));
         txtIPsolicitudConexion = new JTextField();
+        txtIPsolicitudConexion.setHorizontalAlignment(JTextField.CENTER);
         btnEnviarSolicitudConexion = new JButton("Acceder");
         btnEnviarSolicitudConexion.addActionListener(this);
         
@@ -73,21 +75,99 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e) 
     {
-       if(e.getSource()==btnEnviarSolicitudConexion)
-       {
-           if(txtIPsolicitudConexion.getText().equals(""))
+        if(e.getSource()==btnEnviarSolicitudConexion)
+        {
+            if(txtIPsolicitudConexion.getText().equals(""))
             {
                 FormLlenarCamposError LlenarCamposError = new FormLlenarCamposError();
                 LlenarCamposError.setVisible(true);
             }
-           else{
-                    FormLogIn LogIn = new FormLogIn();
-                    LogIn.setVisible(true);
-                    this.setVisible(false);
-           }
-           //COMENTAR
+            else
+            {
+                String IP = txtIPsolicitudConexion.getText();
+                String[] partesIP = IP.split(Pattern.quote("."));
+                int[] numeros = new int[partesIP.length];
+                if(partesIP.length==4)
+                {
+                    for(int i=0; i<4; i++) numeros[i] = Integer.parseInt(partesIP[i]);
+                    if(numeros[0]>0 && numeros[0]<256 && numeros[1]>0 && numeros[1]<256 && numeros[2]>0 && numeros[2]<256 && numeros[3]>0 && numeros[3]<256)
+                    {
+                        //System.out.println("Conectado al Servidor...");
+                        FormLogIn LogIn = new FormLogIn();
+                        LogIn.setVisible(true);
+                        this.setVisible(false);
+                        
+                        /*
+                            String ipServidor = txtIPsolicitudConexion.getText();
+                            Socket clienteSocket =  null;
+                            try {
+                                clienteSocket = new Socket(ipServidor,1000);
+                                ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket);
+                                Escritura.solicitarConexion(ipServidor);
+                            } catch (IOException ex) {
+                                FormErrorGeneral error = new FormErrorGeneral("Error conexion a "+ ipServidor);
+                                error.setVisible(true);
+                                //this.setVisible(false);
+                            }
+                            if(clienteSocket == null){
+
+                            }else{
+                                ObjectInputStream OIS = null;
+                                try {    
+                                    OIS = new ObjectInputStream(clienteSocket.getInputStream());
+                                }catch (IOException ex) {
+                                    FormErrorGeneral error = new FormErrorGeneral("Error: "+ ex.getMessage());
+                                    error.setVisible(true);
+                                    this.setVisible(false);
+                                }
+                                Mensaje men = new Mensaje();
+                                Socket clienteS =  null;
+                                try {
+                                    men = (Mensaje)OIS.readObject();
+                                    if(men.getOperacion().equals("SOLICITAR_CONEXION") && men.isEstado()){
+                                     clienteSocket.close();
+                                     clienteS = new Socket(ipServidor,Integer.parseInt(men.getMensaje()));
+                                    }else{
+                                        FormErrorGeneral error = new FormErrorGeneral("No fue recibida respuesta del servidor");
+                                        error.setVisible(true);
+                                    }
+                                } catch (ClassNotFoundException ex) {
+                                    FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
+                                    error.setVisible(true);
+                                } catch (IOException ex) {
+                                    FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
+                                    error.setVisible(true);
+                                }
+                                Thread hiloLectura = null;
+                                try {
+                                    hiloLectura = new Thread(new ClienteHiloLectura(clienteS));
+                                } catch (IOException ex) {
+                                    FormErrorGeneral error = new FormErrorGeneral("Error: "+ex.getMessage());
+                                    error.setVisible(true);
+                                }
+                                hiloLectura.start();
+                                FormLogIn LogIn = new FormLogIn();
+                                LogIn.setVisible(true);
+                                this.setVisible(false);
+                            }   */
+                       
+                    }
+                    else
+                    {
+                        FormErrorGeneral Error = new FormErrorGeneral("Por favor, escriba la IP correctamente");
+                        Error.setVisible(true);
+                    }
+                }
+                else
+                {
+                    FormErrorGeneral Error = new FormErrorGeneral("Por favor, escriba la IP correctamente");
+                    Error.setVisible(true);
+                }
+            }
+        }
+           
            /*
-            else{
+            
                 //System.out.println("Conectando al Servidor...");
                 String ipServidor = txtIPsolicitudConexion.getText();
                 Socket clienteSocket =  null;
@@ -140,9 +220,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                     FormLogIn LogIn = new FormLogIn();
                     LogIn.setVisible(true);
                     this.setVisible(false);
-                }   
-            }*/
-           //COMENTAR
+                }   */
+
         }
     }
-}

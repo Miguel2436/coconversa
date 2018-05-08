@@ -26,7 +26,6 @@ public class FormSignUpError extends JFrame implements ActionListener
         this.setSize(340,110);
         setLocationRelativeTo(null);
         this.setResizable(false); 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public void componentes()

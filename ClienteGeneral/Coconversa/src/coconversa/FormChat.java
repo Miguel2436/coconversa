@@ -36,11 +36,12 @@ public class FormChat extends JFrame implements ActionListener
     
     //-----PANEL AMIGOS-------------------------------------------------------
     private JTextField txtBuscarAmigosChat;
-    private JButton btnBuscarAmigosChat,btnMensajeAmigoChat,btnEliminarAmigoChat;
+    private JButton btnBuscarAmigosChat,btnMensajeAmigoChat,btnEliminarAmigoConectadoChat,btnEliminarAmigoDesconectadoChat;
     private JTabbedPane tabAmigosChat;
-    private JPanel panelAmigosChat,panelListaAmigosChat;
+    private JPanel panelAmigosChat,panelListaAmigosConectadosChat,panelListaAmigosDesconectadosChat;
     private JScrollPane scrAmigosConectadosChat,scrAmigosDesconectadosChat;
-    private JLabel lblAmigosChat,lblAmigosConectadosChat;
+    private JLabel lblAmigosChat,lblAmigosConectadosChat,lblAmigosDesconectadosChat;
+    private JList listaAmigosConectadosChat,listaAmigosDesconectadosChat;
     
     //------PANEL GRUPOS------------------------------------------------------
     private JTabbedPane tabGruposChat;
@@ -57,12 +58,16 @@ public class FormChat extends JFrame implements ActionListener
     String Usuario="Miguel";
     String []arregConversacionChat={Amigo,Usuario};
     String AmigosConectados=Amigo;
+    //String AmigosDesconectados={"Mony","Dogo"};
+    String []arregAmigosConectadosChat={AmigosConectados};
+    String []arregAmigosDesconectadosChat={"Mony","Dogo","Kate","Grecia","Leo"};
     String Grupo="Grupo";
+    String []arregGruposChat={"Grupo1","Grupo2","Grupo3","Grupo4","Grupo5"};
     
-    public FormChat()
+    public FormChat(String NombreUsuario)
     {
         configurar();
-        componentes();
+        componentes(NombreUsuario);
     }
     
     public void configurar()
@@ -75,14 +80,15 @@ public class FormChat extends JFrame implements ActionListener
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public void componentes()
+    public void componentes(String NombreUsuario)
     {
         //--------PANEL DE LA CONVERSACIÓN---------------
         lblCoconversa = new JLabel("Nuestro Super Mega Uper Duper Chat: COCONVERSA");
         lblCoconversa.setFont(new Font ("Calibri (Cuerpo)", Font.BOLD ,18));
         
-        lblUsuarioChat=new JLabel(Usuario);
+        lblUsuarioChat=new JLabel(NombreUsuario);
         btnSalirChat = new JButton("Salir");
+        btnSalirChat.addActionListener(this);
         pnlUsuarioBoton = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 3));
         pnlUsuarioBoton.setBorder(new LineBorder(Color.BLACK));
         pnlUsuarioBoton.add(lblUsuarioChat);
@@ -137,23 +143,59 @@ public class FormChat extends JFrame implements ActionListener
         lblAmigosConectadosChat=new JLabel(AmigosConectados);
         btnBuscarAmigosChat= new JButton("Buscar");
         btnMensajeAmigoChat= new JButton("Mensaje");
-        btnEliminarAmigoChat= new JButton("Eliminar");
+        btnEliminarAmigoConectadoChat= new JButton("Eliminar");
+        btnEliminarAmigoDesconectadoChat= new JButton("Eliminar");
         txtBuscarAmigosChat=new JTextField();
-        panelListaAmigosChat=new JPanel();
-        scrAmigosConectadosChat = new JScrollPane(panelListaAmigosChat);
+        
+        //-------------AMIGOS CONECTADOS-----------------------------------------------------
+        listaAmigosConectadosChat= new JList(arregAmigosConectadosChat);
+        panelListaAmigosConectadosChat=new JPanel();
+        scrAmigosConectadosChat = new JScrollPane(panelListaAmigosConectadosChat);
         scrAmigosConectadosChat.getVerticalScrollBar().setUnitIncrement(10);
-        panelListaAmigosChat.setLayout(new BoxLayout(panelListaAmigosChat,X_AXIS));
+        panelListaAmigosConectadosChat.setLayout(new BoxLayout(panelListaAmigosConectadosChat,X_AXIS));
         scrAmigosConectadosChat.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrAmigosConectadosChat.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        //---------------------AMIGOS DESCONECTADOS----------------------------------------------------------
+        listaAmigosDesconectadosChat= new JList(arregAmigosDesconectadosChat);
+        panelListaAmigosDesconectadosChat=new JPanel();
+        scrAmigosDesconectadosChat = new JScrollPane(panelListaAmigosDesconectadosChat);
+        scrAmigosDesconectadosChat.getVerticalScrollBar().setUnitIncrement(10);
+        panelListaAmigosDesconectadosChat.setLayout(new BoxLayout(panelListaAmigosDesconectadosChat,X_AXIS));
+        scrAmigosDesconectadosChat.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrAmigosDesconectadosChat.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
  
         tabAmigosChat=new JTabbedPane();
        
-        panelListaAmigosChat.add(Box.createHorizontalStrut(5));
-        panelListaAmigosChat.add(new JLabel(Amigo));
-        panelListaAmigosChat.add(Box.createHorizontalStrut(20));
-        panelListaAmigosChat.add(btnMensajeAmigoChat);
-        panelListaAmigosChat.add(Box.createHorizontalStrut(10));
-        panelListaAmigosChat.add(btnEliminarAmigoChat);
+        //-------------------------AMIGOS CONECTADOS-----------------------------------------------------
+        GroupLayout listasAmigosConectadosChat = new GroupLayout(panelListaAmigosConectadosChat);
+        listasAmigosConectadosChat.setAutoCreateContainerGaps(true);
+        listasAmigosConectadosChat.setAutoCreateGaps(true);
+        listasAmigosConectadosChat.setHorizontalGroup
+        (
+            listasAmigosConectadosChat.createParallelGroup()
+                    .addGroup
+            (
+                listasAmigosConectadosChat.createSequentialGroup()
+                .addComponent(btnMensajeAmigoChat)
+                .addComponent(btnEliminarAmigoConectadoChat)
+            )
+            .addComponent(listaAmigosConectadosChat)
+        );
+        
+        listasAmigosConectadosChat.setVerticalGroup
+        (
+            listasAmigosConectadosChat.createSequentialGroup()
+                    .addGroup
+            (
+                listasAmigosConectadosChat.createParallelGroup()
+                .addComponent(btnMensajeAmigoChat)
+                .addComponent(btnEliminarAmigoConectadoChat)
+            )
+            .addComponent(listaAmigosConectadosChat)
+        );
+        panelListaAmigosConectadosChat.setLayout(listasAmigosConectadosChat);
+        
        
         JPanel panel2=new JPanel();
         
@@ -174,8 +216,53 @@ public class FormChat extends JFrame implements ActionListener
         );
         panel2.setLayout(grupoAmigosConectadosChat);
         
-        tabAmigosChat.addTab("Conectado", panel2);
+        //-------------------------AMIGOS DESCONECTADOS----------------------------------------
         JPanel panel3=new JPanel();
+        GroupLayout listasAmigosDesconectadosChat = new GroupLayout(panelListaAmigosDesconectadosChat);
+        listasAmigosDesconectadosChat.setAutoCreateContainerGaps(true);
+        listasAmigosDesconectadosChat.setAutoCreateGaps(true);
+        listasAmigosDesconectadosChat.setHorizontalGroup
+        (
+            listasAmigosDesconectadosChat.createParallelGroup()
+                    .addGroup
+            (
+                listasAmigosDesconectadosChat.createSequentialGroup()
+                .addComponent(btnEliminarAmigoDesconectadoChat)
+            )
+            .addComponent(listaAmigosDesconectadosChat)
+        );
+        
+        listasAmigosDesconectadosChat.setVerticalGroup
+        (
+            listasAmigosDesconectadosChat.createSequentialGroup()
+                    .addGroup
+            (
+                listasAmigosDesconectadosChat.createParallelGroup()
+                .addComponent(btnEliminarAmigoDesconectadoChat)
+            )
+            .addComponent(listaAmigosDesconectadosChat)
+        );
+        panelListaAmigosDesconectadosChat.setLayout(listasAmigosDesconectadosChat);
+        
+       
+        GroupLayout grupoAmigosDesconectadosChat = new GroupLayout(panel3);
+        grupoAmigosDesconectadosChat.setAutoCreateContainerGaps(true);
+        grupoAmigosDesconectadosChat.setAutoCreateGaps(true);
+     
+        grupoAmigosDesconectadosChat.setHorizontalGroup
+        (
+            grupoAmigosDesconectadosChat.createSequentialGroup()
+            .addComponent(scrAmigosDesconectadosChat)
+        );
+        
+        grupoAmigosDesconectadosChat.setVerticalGroup
+        (
+            grupoAmigosDesconectadosChat.createParallelGroup()
+            .addComponent(scrAmigosDesconectadosChat)
+        );
+        panel3.setLayout(grupoAmigosDesconectadosChat);
+        
+        tabAmigosChat.addTab("Conectado", panel2);
         tabAmigosChat.addTab("No Conectado", panel3);
         
         panelAmigosChat=new JPanel();
@@ -310,12 +397,12 @@ public class FormChat extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
-         if(ae.getSource()== btnSalirChat){
-             this.setVisible(false);
-             System.exit(0);
+         if(ae.getSource()== btnSalirChat ){
+            this.setVisible(false);
+            System.exit(0);
          }
     }
 }

@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -95,35 +96,36 @@ public class FormSignUp extends JFrame implements ActionListener
     {
         if (ae.getSource()==btnRegistrarse)
         {
-            String Contraseña1, Contraseña2;
-            Contraseña1 = txtContraseña.getText();
-            Contraseña2 = txtConfContraseña.getText();
-            if(txtContraseña.getText().equals("") || txtConfContraseña.getText().equals("") || txtNombre.getText().equals(""))
+            String Contraseña1 = Arrays.toString(txtContraseña.getPassword());
+            String Contraseña2 = Arrays.toString(txtConfContraseña.getPassword()); 
+            
+            if(txtNombre.getText().equals("") || Contraseña1.equals("") || Contraseña2.equals(""))
             {
                 FormLlenarCamposError LlenarCamposError = new FormLlenarCamposError();
                 LlenarCamposError.setVisible(true);
             }
             else
             {
-                if(Contraseña1.equals(Contraseña2))
+                if(Contraseña1.equals(Contraseña2) && Contraseña1.equals("[]"))
                 {
-                    //Comentar
-                    /*
-                    ClienteHiloEscritura Escribir = new ClienteHiloEscritura();
-                    Escribir.signUp(txtNombre.getText(),Contraseña2);
-                    */
-                    //Comentar
-                    
-                        FormUsuarioRegistrado UsuarioRegistrado = new FormUsuarioRegistrado();
-                        UsuarioRegistrado.setVisible(true); 
-                    
-                    this.setVisible(false);
+                    FormLlenarCamposError LlenarCamposError = new FormLlenarCamposError();
+                    LlenarCamposError.setVisible(true);
                 }
                 else
                 {
-                    //System.out.println("Las contraseñas no coinciden");
-                    FormSignUpError SignUpError = new FormSignUpError();
-                    SignUpError.setVisible(true);
+                    if(Contraseña1.equals(Contraseña2))
+                    {
+                        
+                        this.setVisible(false);
+                        ClienteHiloEscritura Escribir = new ClienteHiloEscritura();
+                        Escribir.signUp(txtNombre.getText(),Contraseña2);
+                    }
+                    else
+                    {
+                        System.out.println("Las contraseñas no coinciden");
+                        FormSignUpError SignUpError = new FormSignUpError();
+                        SignUpError.setVisible(true);
+                    }
                 }
             }
         }

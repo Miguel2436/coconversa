@@ -38,7 +38,6 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         this.setSize(300,400);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public void componentes()

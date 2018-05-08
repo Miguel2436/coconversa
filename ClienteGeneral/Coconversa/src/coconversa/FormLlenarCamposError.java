@@ -26,7 +26,6 @@ public class FormLlenarCamposError extends JFrame implements ActionListener
         this.setSize(310,80);
         setLocationRelativeTo(null);
         this.setResizable(false); 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public void componentes()

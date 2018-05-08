@@ -27,7 +27,6 @@ public class FormUsuarioNoEncontrado extends JFrame implements ActionListener
         this.setSize(350,250);
         setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
     }
     
     public void componentes()

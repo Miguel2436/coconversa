@@ -9,6 +9,7 @@ import coconversa.FormErrorGeneral;
 import coconversa.FormLogIn;
 import coconversa.FormSignUp;
 import coconversa.FormSolicitudConexion;
+import coconversa.FormUsuarioRegistrado;
 import datos.Amistad;
 import datos.IntegrantesGrupo;
 import datos.Mensaje;

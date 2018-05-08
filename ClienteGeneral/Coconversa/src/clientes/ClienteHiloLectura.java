@@ -47,7 +47,7 @@ public class ClienteHiloLectura implements Runnable
                 switch(Valor){
                     case"LOGIN":
                         if(Paquete.isEstado()){
-                            FormChat Chat = new FormChat();
+                            FormChat Chat = new FormChat(Paquete.getNombre());
                             Chat.setVisible(true);
                         }else{
                             FormErrorGeneral error = new FormErrorGeneral("Datos Usuarios Incorrectos");

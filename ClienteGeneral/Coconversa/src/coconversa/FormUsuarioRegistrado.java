@@ -26,7 +26,6 @@ public class FormUsuarioRegistrado extends JFrame implements ActionListener
         this.setSize(200,150);
         setLocationRelativeTo(null);
         this.setResizable(false); 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public void componentes()
