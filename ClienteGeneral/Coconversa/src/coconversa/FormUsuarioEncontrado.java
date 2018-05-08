@@ -1,5 +1,6 @@
 package coconversa;
 
+import clientes.ClienteHiloEscritura;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,11 +14,12 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
 {
     private JLabel lblUsuarioEncontrado, lblAgregarUsuario;
     private JButton btnSiAgregarUsuario, btnNoAgregarUsuario;
-    
-    public FormUsuarioEncontrado()
+    private String User;
+    public FormUsuarioEncontrado(String Usuario)
     {
+        this.User = Usuario;
         configurar();
-        componentes();
+        componentes(Usuario);
     }
     
     public void configurar()
@@ -26,14 +28,15 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
         this.setSize(350,250);
         setLocationRelativeTo(null);
         this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
     }
     
-    public void componentes()
+    public void componentes(String Usuario)
     {
-        lblUsuarioEncontrado = new JLabel("¡El usuario ha sido encontrado!");
+        lblUsuarioEncontrado = new JLabel("Â¡El usuario" + User + " ha sido encontrado!");
         lblUsuarioEncontrado.setFont(new Font("Calibri (Cuerpo)", Font.BOLD ,18));
         
-        lblAgregarUsuario = new JLabel("¿Quieres Agregarlo?");
+        lblAgregarUsuario = new JLabel("Â¿Quieres Agregarlo?");
         
         btnSiAgregarUsuario = new JButton("Si");
         btnNoAgregarUsuario = new JButton("No");
@@ -69,6 +72,7 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
         );
         this.setLayout(contentPane);
         this.pack();
+        
     }
 
     @Override
@@ -76,9 +80,13 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
     {
         if (ae.getSource()==btnSiAgregarUsuario)
         {
+          ClienteHiloEscritura findFriend = new ClienteHiloEscritura();
+          findFriend.agregarAmigo(User);
+          
         }
         if (ae.getSource()==btnNoAgregarUsuario)
         {
+            this.setVisible(false);
         }
     }
     

@@ -113,6 +113,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
 
                             }else{
                                 ObjectInputStream OIS = null;
+                                
                                 try {    
                                     OIS = new ObjectInputStream(clienteSocket.getInputStream());
                                 }catch (IOException ex) {
@@ -139,16 +140,18 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                                     error.setVisible(true);
                                 }
                                 Thread hiloLectura = null;
+                                FormChat Chat = new FormChat("Usuario");
                                 try {
-                                    hiloLectura = new Thread(new ClienteHiloLectura(clienteS));
+                                    hiloLectura = new Thread(new ClienteHiloLectura(clienteS,Chat));
                                 } catch (IOException ex) {
                                     FormErrorGeneral error = new FormErrorGeneral("Error: "+ex.getMessage());
                                     error.setVisible(true);
-                                }
+                                } 
                                 hiloLectura.start();
                                 FormLogIn LogIn = new FormLogIn();
                                 LogIn.setVisible(true);
                                 this.setVisible(false);
+                                
                             }   */
                        
                     }
@@ -165,62 +168,5 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                 }
             }
         }
-           
-           /*
-            
-                //System.out.println("Conectando al Servidor...");
-                String ipServidor = txtIPsolicitudConexion.getText();
-                Socket clienteSocket =  null;
-                try {
-                    clienteSocket = new Socket(ipServidor,1000);
-                    ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket);
-                    Escritura.solicitarConexion(ipServidor);
-                } catch (IOException ex) {
-                    FormErrorGeneral error = new FormErrorGeneral("Error conexion a "+ ipServidor);
-                    error.setVisible(true);
-                    //this.setVisible(false);
-                }
-                if(clienteSocket == null){
-                    
-                }else{
-                    ObjectInputStream OIS = null;
-                    try {    
-                        OIS = new ObjectInputStream(clienteSocket.getInputStream());
-                    }catch (IOException ex) {
-                        FormErrorGeneral error = new FormErrorGeneral("Error: "+ ex.getMessage());
-                        error.setVisible(true);
-                        this.setVisible(false);
-                    }
-                    Mensaje men = new Mensaje();
-                    Socket clienteS =  null;
-                    try {
-                        men = (Mensaje)OIS.readObject();
-                        if(men.getOperacion().equals("SOLICITAR_CONEXION") && men.isEstado()){
-                         clienteSocket.close();
-                         clienteS = new Socket(ipServidor,Integer.parseInt(men.getMensaje()));
-                        }else{
-                            FormErrorGeneral error = new FormErrorGeneral("No fue recibida respuesta del servidor");
-                            error.setVisible(true);
-                        }
-                    } catch (ClassNotFoundException ex) {
-                        FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
-                        error.setVisible(true);
-                    } catch (IOException ex) {
-                        FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
-                        error.setVisible(true);
-                    }
-                    Thread hiloLectura = null;
-                    try {
-                        hiloLectura = new Thread(new ClienteHiloLectura(clienteS));
-                    } catch (IOException ex) {
-                        FormErrorGeneral error = new FormErrorGeneral("Error: "+ex.getMessage());
-                        error.setVisible(true);
-                    }
-                    hiloLectura.start();
-                    FormLogIn LogIn = new FormLogIn();
-                    LogIn.setVisible(true);
-                    this.setVisible(false);
-                }   */
-
-        }
     }
+}

@@ -109,6 +109,7 @@ public class FormLogIn extends JFrame implements ActionListener
                 //Comentar
                 //Codigo
                     FormChat Chat = new FormChat("Usuario");
+                    Chat.lblUsuarioChat.setText("Proyecto");
                     Chat.setVisible(true);
                 //momentaneo
                 this.setVisible(false);

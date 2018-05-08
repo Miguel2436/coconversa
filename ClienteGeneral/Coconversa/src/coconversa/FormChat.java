@@ -1,5 +1,6 @@
 package coconversa;
 
+import clientes.ClienteHiloEscritura;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,7 +32,9 @@ public class FormChat extends JFrame implements ActionListener
     private JList listaConversacionChat;
     private JScrollPane scrConversacionChat;
     // Esto de abajo lo añadió Alan gg //
-    private JLabel lblCoconversa, lblUsuarioChat;
+    //////////////////////////////////////////////
+    public JLabel lblCoconversa, lblUsuarioChat;
+    ////////////////////////////////////////////
     private JPanel pnlUsuarioBoton;
     
     //-----PANEL AMIGOS-------------------------------------------------------
@@ -403,6 +406,12 @@ public class FormChat extends JFrame implements ActionListener
          if(ae.getSource()== btnSalirChat ){
             this.setVisible(false);
             System.exit(0);
+         }
+         if(ae.getSource()== btnBuscarAmigosChat){
+             ClienteHiloEscritura CB = new ClienteHiloEscritura();
+             String AmigoB= txtBuscarAmigosChat.getText();
+             CB.existeUsuario(AmigoB);
+        
          }
     }
 }

@@ -1,5 +1,6 @@
 package coconversa;
 
+import clientes.ClienteHiloEscritura;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -12,16 +13,18 @@ import javax.swing.JLabel;
 
 public class FormSolicitudAmigo extends JFrame implements ActionListener
 {
-    private JLabel lblSolicitudAmistad;
+   private JLabel lblSolicitudAmistad;
     private JLabel lblAmigoSolicitante;
     private JLabel lblMensajeAmigoSolicitante;
     private JButton btnAceptarAmigo;
     private JButton btnRechazarAmigo;
+    private String user;
 
-    public FormSolicitudAmigo()
+    public FormSolicitudAmigo(String usuario)
     {
+        this.user = usuario;
         configurar();
-        componentes();
+        componentes(usuario);
     }
     
     public void configurar()
@@ -32,12 +35,12 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
         this.setResizable(false);
     }
     
-    public void componentes()
+    public void componentes(String usuario)
     {
         lblSolicitudAmistad = new JLabel("¡Tienes una solicitud de amistad!");
         lblSolicitudAmistad.setFont(new Font("Calibri (Cuerpo)", Font.BOLD, 18));
         
-        lblAmigoSolicitante = new JLabel("Alma Marcela");
+        lblAmigoSolicitante = new JLabel(user);
         lblAmigoSolicitante.setForeground(Color.red);
         lblMensajeAmigoSolicitante = new JLabel(lblAmigoSolicitante.getText() + " quiere ser tu amiga en Coconversa");
         
@@ -79,12 +82,17 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
             
     @Override
     public void actionPerformed(ActionEvent e) 
-    {
-        if(e.getSource()==btnAceptarAmigo)   
+    { if(e.getSource()==btnAceptarAmigo)   
         { 
+          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
+          aceptarAmigo.respuestaAmigo(user, "amigo", true);
+          this.setVisible(false);
         }
         if(e.getSource()==btnRechazarAmigo)   
         { 
+          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
+          aceptarAmigo.respuestaAmigo(user, "amigo", true);
+          this.setVisible(false);
         }
     }
 }

@@ -8,6 +8,8 @@ package clientes;
 import coconversa.FormChat;
 import coconversa.FormErrorGeneral;
 import coconversa.FormLogIn;
+import coconversa.FormUsuarioEncontrado;
+import coconversa.FormUsuarioNoEncontrado;
 import coconversa.FormUsuarioRegistrado;
 import datos.Mensaje;
 import java.io.IOException;
@@ -28,17 +30,18 @@ public class ClienteHiloLectura implements Runnable
     private String Valor;
     private ObjectInputStream OIS;
     private Mensaje Paquete;
+    private FormChat Chat = null ;
     public ClienteHiloLectura (){
    }
    
-   public ClienteHiloLectura (Socket socketParametro) throws IOException{
+   public ClienteHiloLectura (Socket socketParametro,FormChat Chat) throws IOException{
         this.clientesSocketLectura = socketParametro;
         this.OIS = new  ObjectInputStream (socketParametro.getInputStream());
         Paquete = new Mensaje();
-   }
-
+        this.Chat = Chat;
+   }    
     @Override
-    public void run() 
+    public void run()    
     {
         while(clientesSocketLectura.isConnected()){
             try {
@@ -47,7 +50,7 @@ public class ClienteHiloLectura implements Runnable
                 switch(Valor){
                     case"LOGIN":
                         if(Paquete.isEstado()){
-                            FormChat Chat = new FormChat(Paquete.getNombre());
+                            Chat.lblUsuarioChat.setText(Paquete.getNombre());
                             Chat.setVisible(true);
                         }else{
                             FormErrorGeneral error = new FormErrorGeneral("Datos Usuarios Incorrectos");
@@ -67,9 +70,18 @@ public class ClienteHiloLectura implements Runnable
                         }
                     break;
                     case"EXISTE_USUARIO":
-                        
+                        if(Paquete.isEstado()){
+                            FormUsuarioEncontrado UsuarioEncontrado = new FormUsuarioEncontrado(Paquete.getNombre());
+                            UsuarioEncontrado.setVisible(true);
+                            }else{
+                            FormUsuarioNoEncontrado UsuarioE = new FormUsuarioNoEncontrado();
+                            UsuarioE.setVisible(true);
+                        }
                     break;
                     case"AGREGAR_AMIGO":
+                        if(Paquete.isEstado()){
+                            
+                        }
                     break;
                     case"ELIMINAR_GRUPO":
                     break;

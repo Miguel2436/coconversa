@@ -5,6 +5,7 @@
  */
 package clientes;
 
+import coconversa.FormChat;
 import coconversa.FormErrorGeneral;
 import coconversa.FormLogIn;
 import coconversa.FormSignUp;
@@ -31,10 +32,11 @@ public class ClienteHiloEscritura{
 
    private Socket clientesSocketEscritura; 
    private ObjectOutputStream OOS;
+   private FormChat Chat = null ;
    public ClienteHiloEscritura (){
    
-   }
    
+   }
    public ClienteHiloEscritura (Socket socketParametro){
         this.clientesSocketEscritura=socketParametro;
        try {
@@ -42,8 +44,15 @@ public class ClienteHiloEscritura{
        } catch (IOException ex) {
        }
    }
-    
-   
+    public void setChat(FormChat Chat){
+        this.Chat = Chat;
+    }
+    public FormChat getChat(){
+        return this.Chat;
+    }
+   public void cambiar(){
+       Chat.lblUsuarioChat.setText("Hola Mundo");
+   }
    
    ////Funciones de conexion
    /**

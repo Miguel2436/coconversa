@@ -60,11 +60,11 @@ public class Clientes {
         }
         System.out.println("Conectado :D a "+clienteS.getPort());
         Thread hiloLectura = null;
-        try {
+        /*try {
             hiloLectura = new Thread(new ClienteHiloLectura(clienteS));
         } catch (IOException ex) {
             Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
         hiloLectura.start();
         //Formulario
         ClienteHiloEscritura Esc = new ClienteHiloEscritura(clienteSocket);
