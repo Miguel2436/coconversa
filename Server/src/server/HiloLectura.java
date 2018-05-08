@@ -27,6 +27,7 @@ public class HiloLectura extends Thread{
     ServerSocket socket;
     Escritura escritura;
     ObjectOutputStream oos;
+    String nombreUsuario;
     private HashMap<String, ObjectOutputStream> conexiones;
     public HiloLectura(ServerSocket socket, HashMap<String, ObjectOutputStream> conexiones, ObjectOutputStream oos) {
         this.socket = socket;
@@ -59,6 +60,7 @@ public class HiloLectura extends Thread{
                         case "LOGIN":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
+                            nombreUsuario = mensaje.getNombre();
                             mensaje.setOperacion("LOGIN");
                             try {
                                 escritura.logIn(usuario, conexion);
@@ -70,6 +72,7 @@ public class HiloLectura extends Thread{
                         case "SIGNUP":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
+                            nombreUsuario = mensaje.getNombre();
                             try {
                                 escritura.RegistroUsuario(usuario, conexion);
                                 mensaje.setEstado(true);
@@ -233,6 +236,18 @@ public class HiloLectura extends Thread{
                 } catch (ClassNotFoundException ex) {
                     System.out.println("Error al encontrar la clase:" + ex.getMessage());
                 }
+                
+                Usuario usuario = new Usuario(nombreUsuario, "");
+                mensaje = new Mensaje();
+                try {     
+                    escritura.notificacionesAmistad(usuario);
+                } 
+                catch(SQLException ex){
+                    mensaje.setEstado(false);
+                }
+                
+                
+                
             }
         }
     }

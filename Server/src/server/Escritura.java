@@ -323,9 +323,28 @@ public class Escritura {
             + "= '" + u2.getNombre() +  "'");
         sql.executeUpdate();           
     }
+    
     public void cerrarSesion(Usuario usuario) throws SQLException {
         sql.executeUpdate("UPDATE conexion SET Estado = 0 WHERE Usuario = '" + usuario.getNombre() + "';");
     }
+    
+    public List<Usuario> notificacionesAmistad (Usuario u) throws SQLException
+    {
+        List<Usuario> lista = new ArrayList();
+        
+        sql = conexion.prepareStatement ("SELECT amistad.Solicitante FROM amistad WHERE amistad.Estado = 0 AND "
+                + "amistad.Solicitado = '" + u.getNombre() + "';");
+        ResultSet rs;
+        rs = sql.executeQuery();
+        rs.first();
+         do 
+            {
+                Usuario x = new Usuario (rs.getString("Solicitante"), "");
+                lista.add(x);
+            } while (rs.next()); 
+        return lista;
+    }
+    
 }
 
     
