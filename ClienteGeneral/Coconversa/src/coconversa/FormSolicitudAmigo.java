@@ -18,13 +18,14 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
     private JLabel lblMensajeAmigoSolicitante;
     private JButton btnAceptarAmigo;
     private JButton btnRechazarAmigo;
-    private String user;
-
-    public FormSolicitudAmigo(String usuario)
+    private String userD;
+    private String userR;
+    public FormSolicitudAmigo(String Destinatario,String Remitente )
     {
-        this.user = usuario;
+        this.userD = Destinatario;
+        this.userR = Remitente;
         configurar();
-        componentes(usuario);
+        componentes();
     }
     
     public void configurar()
@@ -35,14 +36,14 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
         this.setResizable(false);
     }
     
-    public void componentes(String usuario)
+    public void componentes()
     {
         lblSolicitudAmistad = new JLabel("¡Tienes una solicitud de amistad!");
         lblSolicitudAmistad.setFont(new Font("Calibri (Cuerpo)", Font.BOLD, 18));
         
-        lblAmigoSolicitante = new JLabel(user);
+        lblAmigoSolicitante = new JLabel(userD);
         lblAmigoSolicitante.setForeground(Color.red);
-        lblMensajeAmigoSolicitante = new JLabel(lblAmigoSolicitante.getText() + " quiere ser tu amiga en Coconversa");
+        lblMensajeAmigoSolicitante = new JLabel(lblAmigoSolicitante.getText() + " quiere ser tu amig@ en Coconversa");
         
         btnAceptarAmigo = new JButton("Aceptar");
         btnAceptarAmigo.addActionListener(this);
@@ -85,13 +86,13 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
     { if(e.getSource()==btnAceptarAmigo)   
         { 
           ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
-          aceptarAmigo.respuestaAmigo(user, "amigo", true);
+          aceptarAmigo.respuestaAmigo(userD, userR, true);
           this.setVisible(false);
         }
         if(e.getSource()==btnRechazarAmigo)   
         { 
           ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
-          aceptarAmigo.respuestaAmigo(user, "amigo", true);
+          aceptarAmigo.respuestaAmigo(userD, userR, false);
           this.setVisible(false);
         }
     }

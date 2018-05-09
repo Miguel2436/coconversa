@@ -96,7 +96,9 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                         FormLogIn LogIn = new FormLogIn();
                         LogIn.setVisible(true);
                         this.setVisible(false);
-                        
+                        FormChat x = new FormChat("GOL");
+                        x.setVisible(true);
+                       
                         /*
                             String ipServidor = txtIPsolicitudConexion.getText();
                             Socket clienteSocket =  null;

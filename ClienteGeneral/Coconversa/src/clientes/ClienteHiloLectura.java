@@ -7,15 +7,18 @@ package clientes;
 
 import coconversa.FormChat;
 import coconversa.FormErrorGeneral;
+import coconversa.FormExitosoGeneral;
 import coconversa.FormLogIn;
 import coconversa.FormSolicitudAmigo;
 import coconversa.FormUsuarioEncontrado;
 import coconversa.FormUsuarioNoEncontrado;
 import coconversa.FormUsuarioRegistrado;
 import datos.Mensaje;
+import datos.Usuario;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,6 +90,50 @@ public class ClienteHiloLectura implements Runnable
                     case"ELIMINAR_GRUPO":
                     break;
                     case"MODIFICAR_GRUPO":
+                    break;
+                    case"MENSAJE_CHAT":
+                        
+                    break;
+                    case"MENSAJE_GRUPO":
+                        
+                    break;
+                    case"ELIMINAR_AMIGO":
+                        if(Paquete.isEstado())
+                        {
+                            FormExitosoGeneral exito= new FormExitosoGeneral("Registro Eliminado");
+                            exito.setVisible(true);
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            CE.amigosConectados();
+                            CE.amigosDesconectados();
+                        }
+                    break;
+                    case"AMIGOS_CONECTADOS":
+                        if(Paquete.isEstado())
+                        {
+                            Chat.listModel.clear();
+                            List<Usuario> y ;
+                            y=Paquete.getListaUsuarios();
+                            for(int i = 0; i<y.size(); i++)
+                            {
+                                Chat.listModel.addElement(y.get(i).getNombre());
+                            }
+                        }
+                    break;
+                    case"AMIGOS_DESCONECTADOS":
+                        if(Paquete.isEstado())
+                        {
+                            Chat.listModel.clear();
+                            List<Usuario> y ;
+                            y=Paquete.getListaUsuarios();
+                            for(int i = 0; i<y.size(); i++)
+                            {
+                                Chat.listModel2.addElement(y.get(i).getNombre());
+                            }
+                        }
+                    break;
+                    case"":
+                        FormErrorGeneral errorx = new FormErrorGeneral("Dato extraño del Servidor");
+                        errorx.setVisible(true);
                     break;
                 }
             } catch (IOException ex) {

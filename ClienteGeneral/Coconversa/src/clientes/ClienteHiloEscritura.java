@@ -276,7 +276,40 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
-    
+    ///////////
+    public void enviarMensajeChat(String Remitente, String Destinatario, String Mensaje){
+        Mensaje mensajechat = new Mensaje();
+        mensajechat.setOperacion("MENSAJE_CHAT");
+        mensajechat.setRemitente(Remitente);
+        mensajechat.setDestinatario(Destinatario);
+        mensajechat.setMensaje(Mensaje);
+        try{
+            OOS.writeObject(mensajechat);
+        }catch(IOException ex){
+        }
+    }
+    public void enviarMensjaeGrupo(String Remitente, String Grupo, String Mensaje){
+        Mensaje mensajechat = new Mensaje();
+        mensajechat.setOperacion("MENSAJE_GRUPO");
+        mensajechat.setRemitente(Remitente);
+        mensajechat.setDestinatario(Grupo);
+        mensajechat.setMensaje(Mensaje);
+        try{
+            OOS.writeObject(mensajechat);
+        }catch(IOException ex){
+        }
+    }
+     public void amigosConectados()
+    {
+        Mensaje list= new Mensaje();
+        list.setOperacion("AMIGOS_CONECTADOS");
+    }
+    public void amigosDesconectados()
+    {
+        Mensaje list= new Mensaje();
+        list.setOperacion("AMIGOS_DESCONECTADOS");
+    }
+    //////////
     //////////////////////
     //Funciones Busqueda//
     /////////////////////
