@@ -254,7 +254,8 @@ public class Escritura {
     }
     /**
      * Función para crear un grupo 
-     * 
+     * Crea un grupo asignándole un nombre.
+     *Recibe una lista de los usuarios que pertenecen a ese grupo, y los inserta en la tabla "integrantesGrupo"
      * @param g objeto de tipo grupo
      * @param integrantesGrupo lista de objetos tipo usuario que pertenecerán al grupo a crear
      * @throws SQLException 
@@ -290,6 +291,9 @@ public class Escritura {
     
     /**
      * Función para eliminar un grupo de la BD.
+     *Elimina de la tabla "grupo" el campo que tenga como id el del grupo que se quiera borrar.
+     *De igual manera, se elimina de la tabla "integrantesGrupo" los campos de usuario que su "IdGrupo" sea igual
+     *al del grupo borrado
      * @param g objeto de tipo grupo
      */
    public void eliminarGrupo(Grupo g) throws SQLException
@@ -303,6 +307,8 @@ public class Escritura {
     }
    /**
     * Muestra los usuarios pertenecientes a determinado grupo
+    *Hace una consulta a la tabla "integrantesGrupo" y va guardando los nombres de intengrantes en una lista, 
+    *la cual será retornada.
     * @param g objeto de tipo grupo
     * @return lista con los integrantes de un grupo 
     */
@@ -323,6 +329,8 @@ public class Escritura {
    }
    /**
     * Elimina los usuarios actuales pertenecientes al grupo y los sustituye por la  lista de usuarios recibida
+    *Elimina de la tabla "integrantesGrupo" a los integrantes con la id especificada, y en su lugar pone los nuevos campos
+    *ingresados (Usuario, Grupo)
     * @param l lista de objetos de tipo usuario
     * @param g objeto de tipoo grupo
     */
@@ -343,6 +351,8 @@ public class Escritura {
    
    /**
     * Función que verifica si un usuario ya esta registrado
+    *Hace una consulta a la tabla "usuario" y hace una comparación para ver si el "Nombre" recibido
+    *coincide con alguno de la tabla. Si es así, retorna verdadero, si no, falso.
     * @param u objeto de tipo usuario
     * @return si el nombre ingresado coincide con el registrado, regresa verdadero, sino, 
     * regresa falso.
@@ -365,6 +375,8 @@ public class Escritura {
    
     /**
      * Función para solicitar 
+     * Revisa que el campo (la relación de amistad) no exista, si no existe, ingresa los datos con "Estado" en 0,
+     * como solicitud pendiente.
      * @param u1 objeto de tipo usuario (remitente)
      * @param u2 objeto de tipo usuario (destinatario)
      * @throws SQLException 
@@ -401,7 +413,9 @@ public class Escritura {
     }*/
     
     /**
-     * 
+     * Función para eliminar a un amigo
+     *Recibe dos parámetros, el usuario que quiere eliminar y el usuario que será eliminado.
+     *De la tabla "amistad", borra los campos Solicitante y Solicitado que coincidan con los parámetros recibidos.
      * @param u1 objeto de tipo usuario (remitente)
      * @param u2 objeto de tipo usuario (destinatario)
      * @throws SQLException 
@@ -414,7 +428,8 @@ public class Escritura {
     }
     
     /**
-     * 
+     * Función para cuando se cierra sesión
+     * Cambio el campo "Estado" de la tabla "conexion" a 0 si detecta que un usuario se desconectó.
      * @param usuario objeto de tipo usuario
      * @throws SQLException 
      */
@@ -423,7 +438,10 @@ public class Escritura {
     }
     
     /**
-     * 
+     * Función para modificar amistades
+     * Hace una consulta a la tabla de "amistad", donde el campo "Estado" sea 0, y "Solicitado" el nombre del usuario.
+     * En una lista, se agregan todos los nombres de los "Solicitantes", que son los que hacen la petición de amistad al 
+     * "Solicitado".
      * @param u objeto de tipo usuario
      * @return lista con los nombres de los usuarios con el campo "Estado" en 0
      * @throws SQLException 
