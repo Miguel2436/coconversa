@@ -26,6 +26,15 @@ public class Mensaje implements Serializable{
    private List<Grupo> listaGrupos;
    private List<IntegrantesGrupo> listaIntegrantesGrupo;
    private List<Usuario> listaUsuarios;
+   private List<String> listMensajes;
+
+    public List<String> getListMensajes() {
+        return listMensajes;
+    }
+
+    public void setListMensajes(List<String> listMensajes) {
+        this.listMensajes = listMensajes;
+    }
     /**
      * Obtiene el valor de operacion
      * Este indica al receptor la operacion a realizar con

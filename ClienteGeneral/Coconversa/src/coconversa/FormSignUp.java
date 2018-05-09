@@ -22,7 +22,7 @@ public class FormSignUp extends JFrame implements ActionListener
     private JPanel pnlRegistrarse, pnlBoton;
     private JTextField txtNombre;
     private JPasswordField txtContraseña, txtConfContraseña;
-    private JButton btnRegistrarse;   
+    private JButton btnIniciarSesion, btnRegistrarse;   
     
     public FormSignUp()
     {
@@ -55,9 +55,14 @@ public class FormSignUp extends JFrame implements ActionListener
         lblConfContraseña = new JLabel("Confirma Contraseña"); 
         txtConfContraseña = new JPasswordField();
         
+        btnIniciarSesion = new JButton("Iniciar Sesión");
+        btnIniciarSesion.addActionListener(this);
+        
         btnRegistrarse = new JButton("Registrarse");
         btnRegistrarse.addActionListener(this);
+        
         pnlBoton = new JPanel(new FlowLayout());
+        pnlBoton.add(btnIniciarSesion);
         pnlBoton.add(btnRegistrarse);
         
         GroupLayout contentPane = new GroupLayout(this.getContentPane());
@@ -94,7 +99,13 @@ public class FormSignUp extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent ae) 
     {
-        if (ae.getSource()==btnRegistrarse)
+        if(ae.getSource()==btnIniciarSesion)
+        {
+            this.setVisible(false);
+            FormLogIn LogIn = new FormLogIn();
+            LogIn.setVisible(true);
+        }
+        if(ae.getSource()==btnRegistrarse)
         {
             String Contraseña1 = Arrays.toString(txtContraseña.getPassword());
             String Contraseña2 = Arrays.toString(txtConfContraseña.getPassword()); 

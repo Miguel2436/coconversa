@@ -7,9 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import static javax.swing.BoxLayout.X_AXIS;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.JButton;
@@ -25,7 +28,8 @@ import javax.swing.border.LineBorder;
 
 public class FormChat extends JFrame implements ActionListener
 {
-   //---------PANEL CONVERSACIÓN----------------------------------------------
+    public List<dogo> ChatsAbiertos; 
+    //---------PANEL CONVERSACIÓN----------------------------------------------
     private JTextField txtMensajesChat;
     private JButton btnEnviarChat,btnSalirChat;
     private JTabbedPane tabMensajesChat;
@@ -47,6 +51,8 @@ public class FormChat extends JFrame implements ActionListener
     private JPanel panelAmigosChat,panelListaAmigosConectadosChat,panelListaAmigosDesconectadosChat;
     private JScrollPane scrAmigosConectadosChat,scrAmigosDesconectadosChat;
     private JLabel lblAmigosChat,lblAmigosConectadosChat,lblAmigosDesconectadosChat;
+    public   DefaultListModel listModel = new DefaultListModel();
+    public   DefaultListModel listModel2 = new DefaultListModel();
     private JList listaAmigosConectadosChat,listaAmigosDesconectadosChat;
     
     //------PANEL GRUPOS------------------------------------------------------
@@ -79,6 +85,7 @@ public class FormChat extends JFrame implements ActionListener
     
     public void configurar()
     {
+        ChatsAbiertos = new ArrayList(); 
         this.setTitle("Coconversa");
         this.setSize(1100,450);
         this.setMinimumSize(new Dimension(1100,450));
@@ -89,6 +96,7 @@ public class FormChat extends JFrame implements ActionListener
     
     public void componentes(String NombreUsuario)
     {
+        
         //--------PANEL DE LA CONVERSACIÓN---------------
         lblCoconversa = new JLabel("Nuestro Super Mega Uper Duper Chat: COCONVERSA");
         lblCoconversa.setFont(new Font ("Calibri (Cuerpo)", Font.BOLD ,18));
@@ -149,6 +157,7 @@ public class FormChat extends JFrame implements ActionListener
         //////////////////////////////////
         tabMensajesChat.addTab(Amigo, panelConversacionChat);
         tabMensajesChat.addTab(midogo.nombre, midogo.getPanel());
+
         midogo.btnEnviar.addActionListener(this);
       
 
@@ -159,11 +168,15 @@ public class FormChat extends JFrame implements ActionListener
         btnBuscarAmigosChat= new JButton("Buscar");
         btnMensajeAmigoChat= new JButton("Mensaje");
         btnEliminarAmigoConectadoChat= new JButton("Eliminar");
+        btnEliminarAmigoConectadoChat.addActionListener(this);
         btnEliminarAmigoDesconectadoChat= new JButton("Eliminar");
+        btnEliminarAmigoDesconectadoChat.addActionListener(this);
         txtBuscarAmigosChat=new JTextField();
         
         //-------------AMIGOS CONECTADOS-----------------------------------------------------
-        listaAmigosConectadosChat= new JList(arregAmigosConectadosChat);
+        listModel.addElement("Dogo");
+        listModel.addElement("Jose");
+         listaAmigosConectadosChat= new JList(listModel);
         panelListaAmigosConectadosChat=new JPanel();
         scrAmigosConectadosChat = new JScrollPane(panelListaAmigosConectadosChat);
         scrAmigosConectadosChat.getVerticalScrollBar().setUnitIncrement(10);
@@ -172,7 +185,7 @@ public class FormChat extends JFrame implements ActionListener
         scrAmigosConectadosChat.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
         //---------------------AMIGOS DESCONECTADOS----------------------------------------------------------
-        listaAmigosDesconectadosChat= new JList(arregAmigosDesconectadosChat);
+        listaAmigosDesconectadosChat= new JList(listModel2);
         panelListaAmigosDesconectadosChat=new JPanel();
         scrAmigosDesconectadosChat = new JScrollPane(panelListaAmigosDesconectadosChat);
         scrAmigosDesconectadosChat.getVerticalScrollBar().setUnitIncrement(10);
@@ -184,6 +197,7 @@ public class FormChat extends JFrame implements ActionListener
        
         //-------------------------AMIGOS CONECTADOS-----------------------------------------------------
         GroupLayout listasAmigosConectadosChat = new GroupLayout(panelListaAmigosConectadosChat);
+        btnMensajeAmigoChat.addActionListener(this);
         listasAmigosConectadosChat.setAutoCreateContainerGaps(true);
         listasAmigosConectadosChat.setAutoCreateGaps(true);
         listasAmigosConectadosChat.setHorizontalGroup
@@ -419,15 +433,50 @@ public class FormChat extends JFrame implements ActionListener
             this.setVisible(false);
             System.exit(0);
          }
-         if(ae.getSource()== btnBuscarAmigosChat){
+          if(ae.getSource()== btnBuscarAmigosChat){
              ClienteHiloEscritura CB = new ClienteHiloEscritura();
              String AmigoB= txtBuscarAmigosChat.getText();
              CB.existeUsuario(AmigoB);
         
          }
-         if(ae.getSource()== midogo.btnEnviar){
-             FormErrorGeneral X = new FormErrorGeneral("Funciono");
-             X.setVisible(true);
+         if(ae.getSource()==btnEliminarAmigoConectadoChat)
+         {
+            // System.out.println("Holaaaa");
+            if(listaAmigosConectadosChat.getSelectedValue()!=null)
+            {
+                
+                ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                CB.eliminarAmigo(lblUsuarioChat.getText(), listaAmigosConectadosChat.getSelectedValue().toString());
+            }else
+            {
+                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un amigo");
+                FEG.setVisible(true);
+            }
+             
+         }
+         if(ae.getSource()==btnEliminarAmigoDesconectadoChat)
+         {
+            if(listaAmigosDesconectadosChat.getSelectedValue()!=null)
+            {
+                ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                CB.eliminarAmigo(lblUsuarioChat.getText(), listaAmigosDesconectadosChat.getSelectedValue().toString());
+            }else
+            {
+                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un amigo");
+                FEG.setVisible(true);
+            }
+             
+         }
+         if(ae.getSource() == btnMensajeAmigoChat){
+           
+             midogo= new dogo(listaAmigosConectadosChat.getSelectedValue().toString());
+             
+             ChatsAbiertos.add(midogo);
+             tabMensajesChat.addTab(midogo.nombre, midogo.getPanel());
+         }
+         if(ae.getSource()== ChatsAbiertos.get(0).btnEnviar){
+             FormErrorGeneral x = new FormErrorGeneral("Funciono");
+             x.setVisible(true);
          }
     }
 public class dogo{
@@ -445,7 +494,13 @@ public class dogo{
         listaConversacionChat2=new JList(arregConversacionChat2);
         txtMensajes = new JTextField();
         btnEnviar = new JButton("Enviar");
-        
+        btnEnviar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                FormErrorGeneral x = new FormErrorGeneral("hola");
+                x.setVisible(true);
+            }
+        });
         scrConversacionChat2 = new JScrollPane(listaConversacionChat2);
         scrConversacionChat2.getVerticalScrollBar().setUnitIncrement(10);
         scrConversacionChat2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

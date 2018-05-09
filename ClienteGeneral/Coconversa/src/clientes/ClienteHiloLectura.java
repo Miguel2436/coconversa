@@ -91,11 +91,14 @@ public class ClienteHiloLectura implements Runnable
                     break;
                     case"MODIFICAR_GRUPO":
                     break;
-                    case"MENSAJE_CHAT":
+                    case"MENSAJE_NUEVO":
                         
                     break;
-                    case"MENSAJE_GRUPO":
-                        
+                    case"GET_MENSAJES":
+                        //Regresa los 5 mensajes
+                    break;
+                    case"GET_MENSAJES_GRUPO":
+                        //Regresa los anteriores mensajes
                     break;
                     case"ELIMINAR_AMIGO":
                         if(Paquete.isEstado())
