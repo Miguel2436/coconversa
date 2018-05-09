@@ -32,7 +32,6 @@ public class ClienteHiloEscritura{
 
    private Socket clientesSocketEscritura; 
    private ObjectOutputStream OOS;
-   private FormChat Chat = null ;
    public ClienteHiloEscritura (){
    
    
@@ -43,15 +42,6 @@ public class ClienteHiloEscritura{
            this.OOS = new ObjectOutputStream(clientesSocketEscritura.getOutputStream());
        } catch (IOException ex) {
        }
-   }
-    public void setChat(FormChat Chat){
-        this.Chat = Chat;
-    }
-    public FormChat getChat(){
-        return this.Chat;
-    }
-   public void cambiar(){
-       Chat.lblUsuarioChat.setText("Hola Mundo");
    }
    
    ////Funciones de conexion

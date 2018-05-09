@@ -3,9 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/JOSEM/Desktop/Cliente%20General/Coconversa/src/coconversa/FormLogIn.java</file>
-            <file>file:/C:/Users/JOSEM/Desktop/Cliente%20General/Coconversa/src/coconversa/FormSolicitudConexion.java</file>
-            <file>file:/C:/Users/JOSEM/Desktop/Cliente%20General/Coconversa/src/coconversa/FormSignUp.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/coconversa/FormChat.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/clientes/ClienteHiloLectura.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/coconversa/FormSolicitudConexion.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/coconversa/FormLogIn.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/clientes/Clientes.java</file>
+            <file>file:/C:/Users/JOSEM/Desktop/Coconverse/Coconversa-Cliente/ClienteGeneral/Coconversa/src/clientes/ClienteHiloEscritura.java</file>
         </group>
     </open-files>
 </project-private>

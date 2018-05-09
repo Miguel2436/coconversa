@@ -8,6 +8,7 @@ package clientes;
 import coconversa.FormChat;
 import coconversa.FormErrorGeneral;
 import coconversa.FormLogIn;
+import coconversa.FormSolicitudAmigo;
 import coconversa.FormUsuarioEncontrado;
 import coconversa.FormUsuarioNoEncontrado;
 import coconversa.FormUsuarioRegistrado;
@@ -80,9 +81,8 @@ public class ClienteHiloLectura implements Runnable
                         }
                     break;
                     case"AGREGAR_AMIGO":
-                        if(Paquete.isEstado()){
-                            
-                        }
+                        FormSolicitudAmigo x = new FormSolicitudAmigo(Paquete.getNombre(),Chat.lblUsuarioChat.getText());
+                        x.setVisible(true);
                     break;
                     case"ELIMINAR_GRUPO":
                     break;
