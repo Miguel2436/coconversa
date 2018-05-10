@@ -279,7 +279,7 @@ public class ClienteHiloEscritura{
     ///////////
     public void enviarMensajeChat(String Remitente, String Destinatario, String Mensaje){
         Mensaje mensajechat = new Mensaje();
-        mensajechat.setOperacion("MENSAJE_CHAT");
+        mensajechat.setOperacion("MENSAJE");
         mensajechat.setRemitente(Remitente);
         mensajechat.setDestinatario(Destinatario);
         mensajechat.setMensaje(Mensaje);
@@ -288,9 +288,9 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
-    public void enviarMensjaeGrupo(String Remitente, String Grupo, String Mensaje){
+    public void enviarMensajeGrupo(String Remitente, String Grupo, String Mensaje){
         Mensaje mensajechat = new Mensaje();
-        mensajechat.setOperacion("MENSAJE_GRUPO");
+        mensajechat.setOperacion("MENSAJE_A_GRUPO");
         mensajechat.setRemitente(Remitente);
         mensajechat.setDestinatario(Grupo);
         mensajechat.setMensaje(Mensaje);
@@ -299,15 +299,45 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
-     public void amigosConectados()
+    public void getMensajes(String Remitente, String Destinatario){
+        Mensaje mensajechat = new Mensaje();
+        mensajechat.setOperacion("GET_MENSAJES");
+        mensajechat.setRemitente(Remitente);
+        mensajechat.setDestinatario(Destinatario);
+        try{
+            OOS.writeObject(mensajechat);
+        }catch(IOException ex){
+        }
+    }
+    public void getMensajesGrupo(String Remitente, String Grupo){
+        Mensaje mensajechat = new Mensaje();
+        mensajechat.setOperacion("GET_MENSAJES_GRUPOS");
+        mensajechat.setRemitente(Remitente);
+        mensajechat.setDestinatario(Grupo);
+        try{
+            OOS.writeObject(mensajechat);
+        }catch(IOException ex){
+        }
+    }
+     public void amigosConectados(String Usuario)
     {
         Mensaje list= new Mensaje();
         list.setOperacion("AMIGOS_CONECTADOS");
+        list.setNombre(Usuario);
+        try
+        {
+            OOS.writeObject(list);
+        }catch(IOException ex){}
     }
-    public void amigosDesconectados()
+    public void amigosDesconectados(String Usuario)
     {
         Mensaje list= new Mensaje();
         list.setOperacion("AMIGOS_DESCONECTADOS");
+        list.setNombre(Usuario);
+        try
+        {
+            OOS.writeObject(list);
+        }catch(IOException ex){}
     }
     //////////
     //////////////////////

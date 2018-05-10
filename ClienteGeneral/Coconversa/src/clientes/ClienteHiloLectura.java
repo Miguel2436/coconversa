@@ -92,10 +92,39 @@ public class ClienteHiloLectura implements Runnable
                     case"MODIFICAR_GRUPO":
                     break;
                     case"MENSAJE_NUEVO":
+                        boolean Creado = false;
+                        int k = 0;
+                        for(k=0; k<Chat.ChatsAbiertos.size();k++){
+                            if(Chat.ChatsAbiertos.get(k).nombre.equals(Paquete.getRemitente())){
+                                Chat.ChatsAbiertos.get(k).AreaChat.append("\n"+Paquete.getMensaje());
+                                Creado = true;
+                            }
+                        }
+                        if(!Creado){
+                            Chat.chatCreador(Paquete.getRemitente());
+                            Chat.ChatsAbiertos.get(k).AreaChat.append("\n"+Paquete.getMensaje());
+                        }
                         
                     break;
-                    case"GET_MENSAJES":
-                        //Regresa los 5 mensajes
+                    case"GET_MENSAJES":       
+                        boolean Creado2 = false;
+                        int j = 0;
+                        String R2 = Paquete.getRemitente();
+                        List<String> Mensajes = Paquete.getListMensajes();
+                        for(j = 0; j<Chat.ChatsAbiertos.size();j++){
+                            if(Chat.ChatsAbiertos.get(j).nombre.equals(R2)){
+                                for(int m = 0; m< Mensajes.size();m++){
+                                   Chat.ChatsAbiertos.get(j).AreaChat.append("\n"+ Mensajes.get(m));   
+                                }  
+                                Creado2 = true;
+                            }                
+                        }
+                        if(!Creado2){
+                            Chat.chatCreador(Paquete.getRemitente());
+                            for(int m = 0; m< Mensajes.size();m++){
+                                Chat.ChatsAbiertos.get(j).AreaChat.append("\n"+ Mensajes.get(m));   
+                            }  
+                        }
                     break;
                     case"GET_MENSAJES_GRUPO":
                         //Regresa los anteriores mensajes
@@ -106,8 +135,8 @@ public class ClienteHiloLectura implements Runnable
                             FormExitosoGeneral exito= new FormExitosoGeneral("Registro Eliminado");
                             exito.setVisible(true);
                             ClienteHiloEscritura CE= new ClienteHiloEscritura();
-                            CE.amigosConectados();
-                            CE.amigosDesconectados();
+                            CE.amigosConectados(Chat.Usuario);
+                            CE.amigosDesconectados(Chat.Usuario);
                         }
                     break;
                     case"AMIGOS_CONECTADOS":

@@ -96,7 +96,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                         FormLogIn LogIn = new FormLogIn();
                         LogIn.setVisible(true);
                         this.setVisible(false);
-                        FormChat x = new FormChat("GOL");
+                        FormChat x = new FormChat("Leo");
                         x.setVisible(true);
                        
                         /*
