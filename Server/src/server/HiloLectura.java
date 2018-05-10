@@ -270,8 +270,3 @@ public class HiloLectura extends Thread{
         }
     }
 }
-
-            
-        
-       
-
