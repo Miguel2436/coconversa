@@ -130,15 +130,16 @@ public class Escritura {
      * Funcion que confirma el estado de la solicitud
      * Actualiza el campo "Estado" en 1 cuando el usuario solicitado acepta la petición de amistad del solicitante.
      * 
-     * @param x objeti tipo usuario (destinatario)
-     * @param y objeto tipo usuario (remitente)
+     * @param solicitado objeti tipo usuario (destinatario)
+     * @param solicitante objeto tipo usuario (remitente)
      * @throws SQLException 
      */
-    public void AceptarAmigo (Usuario x, Usuario y) throws SQLException
+    public void AceptarAmigo (Usuario solicitado, Usuario solicitante) throws SQLException
     {
         sql= conexion.prepareStatement("UPDATE amistad SET Estado = true WHERE"
-                + "amistad.Solicitante = '" + x.getNombre() +
-                "' AND amistad.Solicitado = '" + y.getNombre() + "'");     
+                + "amistad.Solicitante = '" + solicitante.getNombre() +
+                "' AND amistad.Solicitado = '" + solicitado.getNombre() + "'");  
+        sql.executeUpdate();
     }
     
     /**
@@ -374,18 +375,18 @@ public class Escritura {
      * @param u2 objeto de tipo usuario (destinatario)
      * @throws SQLException 
      */
-    public void AgregarAmigo(Usuario u1, Usuario u2) throws SQLException {
+    public void AgregarAmigo(Usuario solicitado, Usuario solicitante) throws SQLException {
         sql = conexion.prepareStatement("SELECT COUNT(amistad.IdAmistad) AS 'Verifica' "
-                + "FROM amistad WHERE amistad.Solicitante = '" + u1.getNombre() + "' AND amistad.Solicitado"
-                + "= '" + u2.getNombre() +  "'");
+                + "FROM amistad WHERE amistad.Solicitante = '" + solicitado.getNombre() + "' AND amistad.Solicitado"
+                + "= '" + solicitante.getNombre() +  "'");
         rs = sql.executeQuery();
         rs.first();
             
         if(rs.getInt("Verifica") == 0){
             PreparedStatement sqlInsert = conexion.prepareStatement("INSERT INTO amistad(IdAmistad, Solicitante, "
                 + "Solicitado, Estado) values(null, ?, ?, ?)");
-            sqlInsert.setString(1, u1.getNombre());
-            sqlInsert.setString(2, u2.getNombre());
+            sqlInsert.setString(1, solicitado.getNombre());
+            sqlInsert.setString(2, solicitante.getNombre());
             sqlInsert.setInt(3, 0);
             sqlInsert.executeUpdate();
             }else{

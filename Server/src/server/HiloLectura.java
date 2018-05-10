@@ -30,6 +30,8 @@ public class HiloLectura extends Thread{
     private Escritura escritura;
     private ObjectOutputStream oos;
     private HashMap<String, ObjectOutputStream> conexiones;
+    private Usuario user;
+    
     public HiloLectura(Socket socket, HashMap<String, ObjectOutputStream> conexiones, ObjectOutputStream oos) {
         System.out.println("Creando Hilo lectura");
         this.socket = socket;
@@ -69,11 +71,10 @@ public class HiloLectura extends Thread{
                                 break;
                             }
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
+                            user = usuario;
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
-                            mensaje.setOperacion("LOGIN");
-                            try {
-                                escritura.logIn(usuario, conexion);
-                                mensaje.setEstado(true);
+                            try {                                
+                                mensaje.setEstado(escritura.logIn(usuario, conexion));
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
@@ -84,6 +85,7 @@ public class HiloLectura extends Thread{
                                 break;
                             }
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
+                            user = usuario;
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             try {
                                 escritura.RegistroUsuario(usuario, conexion);
@@ -234,7 +236,7 @@ public class HiloLectura extends Thread{
                             usuario = new Usuario(mensaje.getRemitente(), "");
                             usuario2 = new Usuario(mensaje.getDestinatario(), "");
                             try {
-                                escritura.AceptarAmigo(usuario2, usuario);
+                                escritura.AceptarAmigo(usuario, usuario2);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
