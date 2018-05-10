@@ -32,6 +32,7 @@ import javax.swing.border.LineBorder;
 
 public class FormChat extends JFrame implements ActionListener
 {
+    public List<Usuario> ListUsuario = null;
     public List<chat> ChatsAbiertos; 
     //---------PANEL CONVERSACIÓN----------------------------------------------
     private JTextField txtMensajesChat;
@@ -66,12 +67,13 @@ public class FormChat extends JFrame implements ActionListener
     private JScrollPane scrGruposChat;
     private JLabel lblGruposChat,lblNombreGrupoChat;
     private JPanel panelScrollGruposChat;
-    
+    public JList listaGruposChat;
     private JPanel panelListaGruposChat;
     private JScrollPane scrListaGruposChat;
             
     public String Usuario;
-    
+    public   DefaultListModel listModelGrupo = new DefaultListModel(); //Este usaré para acceder a los métodos de GRUPO
+
     
     public FormChat(String NombreUsuario)
     {
@@ -321,12 +323,18 @@ public class FormChat extends JFrame implements ActionListener
         panelAmigosChat.setLayout(grupoAmigosChat);
         
         //-----------------PANEL DE GRUPOS----------------
+        listaGruposChat= new JList(listModelGrupo);
         lblGruposChat = new JLabel("GRUPOS");
         btnCrearGruposChat = new JButton("Crear Grupo");
+        btnCrearGruposChat.addActionListener(this);
         btnMensajeGruposChat=new JButton("Mensaje");
+        btnMensajeGruposChat.addActionListener(this);
         btnModificarGruposChat=new JButton("Modificar");
+        btnModificarGruposChat.addActionListener(this);
         btnSalirGruposChat=new JButton("Salir");
+        btnSalirGruposChat.addActionListener(this);
         btnEliminarGruposChat=new JButton("Eliminar");
+        btnEliminarGruposChat.addActionListener(this);
         panelListaGruposChat = new JPanel();
         scrListaGruposChat = new JScrollPane(panelListaGruposChat);
         scrListaGruposChat.getVerticalScrollBar().setUnitIncrement(10);
