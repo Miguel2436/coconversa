@@ -42,6 +42,16 @@ public class Escritura {
          
     }
     
+    /**
+     * Función para registrar un usuario. 
+     * Valida que el nombre del usuario no se haya registrado anteriormente.
+     * Almacena los datos ingresados por el usaurio en la base de datos.
+     * Crea la conexión del usuario.
+     * 
+     * @param u objeto tipo usuario
+     * @param c objeto tipo conexion
+     * @throws SQLException 
+     */
     public void RegistroUsuario (Usuario u, Conexion c) throws SQLException 
     {
         sql = conexion.prepareStatement("SELECT COUNT(Nombre) AS 'Existe' from usuario "
@@ -64,6 +74,17 @@ public class Escritura {
         }
         
     }
+    
+    /**
+     * Función que devuelve la lista de amigos
+     * Recibe al usuario conectado.
+     * Verifica en la BD y devuelve los usuarios que en la tabla amistad tienen el campo "Estado" en 1.
+     * Verifica que el valor devuelto corresponda solamente al usuario conectado.
+     * 
+     * @param u objeto tipo usuario
+     * @return lista de usuarios amigos
+     * @throws SQLException 
+     */
     public List<Usuario> SolicitarAmigos(Usuario u) throws SQLException
     {
         List<Usuario> lista = new ArrayList<>();
@@ -86,10 +107,18 @@ public class Escritura {
             } while (rs.next()); 
         return lista;
     }
+    
+    /**
+     * Funcion que devuelve la lista de grupos en los que el usuario pertenece
+     * 
+     * @param u objeto tipo usuario
+     * @return lista de los grupos en los que el usuario pertenece
+     * @throws SQLException 
+     */
     public List<Grupo> SolicitarGrupos (Usuario u) throws SQLException
     {
         List<Grupo> lista = new ArrayList<>();
-       
+        
             sql = conexion.prepareStatement("SELECT grupo.IdGrupo, grupo.Nombre "
                     + "FROM grupo, integrantesgrupo WHERE grupo.IdGrupo = integrantesgrupo.Grupo" +
                     "AND integrantesgrupo.Usuario = '" + u.getNombre() +"'");
@@ -103,12 +132,31 @@ public class Escritura {
             } while (rs.next());  
         return lista;
     }
+    
+    /**
+     * Funcion que confirma el estado de la solicitud
+     * Actualiza el campo "Estado" en 1 cuando el usuario solicitado acepta la petición de amistad del solicitante.
+     * 
+     * @param x objeti tipo usuario (destinatario)
+     * @param y objeto tipo usuario (remitente)
+     * @throws SQLException 
+     */
     public void AceptarAmigo (Usuario x, Usuario y) throws SQLException
     {
         sql= conexion.prepareStatement("UPDATE amistad SET Estado = true WHERE"
                 + "amistad.Solicitante = '" + x.getNombre() +
                 "' AND amistad.Solicitado = '" + y.getNombre() + "'");     
     }
+    
+    /**
+     * Función que devuelve los amigos conectados
+     * Verifica que los campos "Estado" tanto de la tabla amistad como de la tabla conexion, se encuentren en 1.
+     * Verifica que el valor devuelto corresponda solamente al usuario conectado. 
+     * 
+     * @param u objeto de tipo usuario
+     * @return lista de amigos conectados
+     * @throws SQLException 
+     */
     public List<Usuario> SolicitarAmigosConectados (Usuario u) throws SQLException
     {
         List<Usuario> lista = new ArrayList<>();
@@ -138,6 +186,16 @@ public class Escritura {
         return lista;
     }
     
+    /**
+     * Función que devuelve los amigos desconectados
+     * Verifica que el campo "Estado" de la tabla amistad este en 1. 
+     * Verifica que el campo "Estado" de la tabla conexion, se encuentren en 0.
+     * Verifica que el valor devuelto corresponda solamente al usuario conectado. 
+     * 
+     * @param u objeto de tipo usuario
+     * @return lista de amigos desconectados
+     * @throws SQLException 
+     */
     public List<Usuario> SolicitarAmigosDesconectados (Usuario u) throws SQLException
     {
         List<Usuario> lista = new ArrayList<>();
@@ -167,14 +225,17 @@ public class Escritura {
         return lista;
     }
     /**
-     * Función para solicitar la entrda al sistema por 
+     * Función para solicitar la entrada al sistema por 
      * medio de la validación de los datos de usuario(nombre y contraseña)
-     * @param u
-     * @return
+     * Pide el nombre de usuario y contraseña, los compara con los registros en la base de datos, 
+     * y si coinciden, cambia el estado de conexion
+     * @param u objeto de tipo usuario
+     * @return  si el nombre y la contraseña coinciden con los registros de una fila retorna verdadero
+     * si no, retorna falso. 
      * @throws SQLException 
      */
     public boolean logIn(Usuario u, Conexion c) throws SQLException
-    {
+    {// Debe regresar el nombre del usuario
         sql=conexion.prepareStatement("SELECT password FROM usuario Where Nombre='"+u.getNombre()+"'");
         rs=sql.executeQuery();
         while(rs.next()==true)
@@ -192,7 +253,9 @@ public class Escritura {
         
     }
     /**
-     * útil para crear un grupo 
+     * Función para crear un grupo 
+     * Crea un grupo asignándole un nombre.
+     *Recibe una lista de los usuarios que pertenecen a ese grupo, y los inserta en la tabla "integrantesGrupo"
      * @param g objeto de tipo grupo
      * @param integrantesGrupo lista de objetos tipo usuario que pertenecerán al grupo a crear
      * @throws SQLException 
@@ -225,8 +288,12 @@ public class Escritura {
                 sql.executeUpdate();
         }    
     }
+    
     /**
-     * útil para eliminar un grupo de la BD.
+     * Función para eliminar un grupo de la BD.
+     *Elimina de la tabla "grupo" el campo que tenga como id el del grupo que se quiera borrar.
+     *De igual manera, se elimina de la tabla "integrantesGrupo" los campos de usuario que su "IdGrupo" sea igual
+     *al del grupo borrado
      * @param g objeto de tipo grupo
      */
    public void eliminarGrupo(Grupo g) throws SQLException
@@ -240,8 +307,10 @@ public class Escritura {
     }
    /**
     * Muestra los usuarios pertenecientes a determinado grupo
+    *Hace una consulta a la tabla "integrantesGrupo" y va guardando los nombres de intengrantes en una lista, 
+    *la cual será retornada.
     * @param g objeto de tipo grupo
-    * @return 
+    * @return lista con los integrantes de un grupo 
     */
    public List<Usuario> detallesGrupo(Grupo g) throws SQLException
    {       
@@ -260,6 +329,8 @@ public class Escritura {
    }
    /**
     * Elimina los usuarios actuales pertenecientes al grupo y los sustituye por la  lista de usuarios recibida
+    *Elimina de la tabla "integrantesGrupo" a los integrantes con la id especificada, y en su lugar pone los nuevos campos
+    *ingresados (Usuario, Grupo)
     * @param l lista de objetos de tipo usuario
     * @param g objeto de tipoo grupo
     */
@@ -277,6 +348,16 @@ public class Escritura {
                 sql.executeUpdate();
         }    
    }
+   
+   /**
+    * Función que verifica si un usuario ya esta registrado
+    *Hace una consulta a la tabla "usuario" y hace una comparación para ver si el "Nombre" recibido
+    *coincide con alguno de la tabla. Si es así, retorna verdadero, si no, falso.
+    * @param u objeto de tipo usuario
+    * @return si el nombre ingresado coincide con el registrado, regresa verdadero, sino, 
+    * regresa falso.
+    * @throws SQLException 
+    */
    public boolean ExisteUsuario(Usuario u) throws SQLException {
             sql= conexion.prepareStatement("SELECT usuario.Nombre FROM Usuario");
             rs = sql.executeQuery();
@@ -291,6 +372,15 @@ public class Escritura {
             }       
         return false;
     }
+   
+    /**
+     * Función para solicitar 
+     * Revisa que el campo (la relación de amistad) no exista, si no existe, ingresa los datos con "Estado" en 0,
+     * como solicitud pendiente.
+     * @param u1 objeto de tipo usuario (remitente)
+     * @param u2 objeto de tipo usuario (destinatario)
+     * @throws SQLException 
+     */
     public void AgregarAmigo(Usuario u1, Usuario u2) throws SQLException {
         sql = conexion.prepareStatement("SELECT COUNT(amistad.IdAmistad) AS 'Verifica' "
                 + "FROM amistad WHERE amistad.Solicitante = '" + u1.getNombre() + "' AND amistad.Solicitado"
@@ -310,22 +400,69 @@ public class Escritura {
             }          
     }
     
-    public void AceptarAmigo(Amistad a) throws SQLException {
+    /**
+     * 
+     * @param a objeto de tipo amistad
+     * @throws SQLException 
+     */
+    /*public void AceptarAmigo(Amistad a) throws SQLException {
         sql = conexion.prepareStatement("UPDATE amistad SET amistad.Estado= " + 1 + ", "
             + "WHERE amistad.Solicitante = '" + a.getSolicitante() + "' AND amistad.Solicitado"
             + "= '" + a.getSolicitado() +  "'");
         sql.executeUpdate(); 
-    }
+    }*/
     
+    /**
+     * Función para eliminar a un amigo
+     *Recibe dos parámetros, el usuario que quiere eliminar y el usuario que será eliminado.
+     *De la tabla "amistad", borra los campos Solicitante y Solicitado que coincidan con los parámetros recibidos.
+     * @param u1 objeto de tipo usuario (remitente)
+     * @param u2 objeto de tipo usuario (destinatario)
+     * @throws SQLException 
+     */
     public void EliminarAmigo(Usuario u1, Usuario u2) throws SQLException {
         sql = conexion.prepareStatement("DELETE FROM amistad"
             + "WHERE amistad.Solicitante = '" + u1.getNombre() + "' AND amistad.Solicitado"
             + "= '" + u2.getNombre() +  "'");
         sql.executeUpdate();           
     }
+    
+    /**
+     * Función para cuando se cierra sesión
+     * Cambio el campo "Estado" de la tabla "conexion" a 0 si detecta que un usuario se desconectó.
+     * @param usuario objeto de tipo usuario
+     * @throws SQLException 
+     */
     public void cerrarSesion(Usuario usuario) throws SQLException {
         sql.executeUpdate("UPDATE conexion SET Estado = 0 WHERE Usuario = '" + usuario.getNombre() + "';");
     }
+    
+    /**
+     * Función para modificar amistades
+     * Hace una consulta a la tabla de "amistad", donde el campo "Estado" sea 0, y "Solicitado" el nombre del usuario.
+     * En una lista, se agregan todos los nombres de los "Solicitantes", que son los que hacen la petición de amistad al 
+     * "Solicitado".
+     * @param u objeto de tipo usuario
+     * @return lista con los nombres de los usuarios con el campo "Estado" en 0
+     * @throws SQLException 
+     */
+    public List<Usuario> notificacionesAmistad (Usuario u) throws SQLException
+    {
+        List<Usuario> lista = new ArrayList();
+        
+        sql = conexion.prepareStatement ("SELECT amistad.Solicitante FROM amistad WHERE amistad.Estado = 0 AND "
+                + "amistad.Solicitado = '" + u.getNombre() + "';");
+        ResultSet rs;
+        rs = sql.executeQuery();
+        rs.first();
+         do 
+            {
+                Usuario x = new Usuario (rs.getString("Solicitante"), "");
+                lista.add(x);
+            } while (rs.next()); 
+        return lista;
+    }
+    
 }
 
     
