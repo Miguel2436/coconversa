@@ -1,10 +1,13 @@
 package coconversa;
 
+import clientes.ClienteHiloEscritura;
+import datos.Usuario;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import static javax.swing.BoxLayout.Y_AXIS;
@@ -25,9 +28,11 @@ public class FormModificarGrupo extends JFrame implements ActionListener
     private JPanel pnlListaAmigos;
     private JScrollPane scrListaAmigos;
     private JButton btnModificarGrupo;
-    
-    public FormModificarGrupo()
+    private List <Usuario> usuariosGeneral; //Lista para traer a los usuarios
+
+    public FormModificarGrupo(List <Usuario> usuarios)
     {
+       this.usuariosGeneral = usuarios;
         configurar();
         componentes();
     }
@@ -60,9 +65,9 @@ public class FormModificarGrupo extends JFrame implements ActionListener
         btnModificarGrupo.addActionListener(this);
         
         pnlListaAmigos.add(Box.createVerticalStrut(10));
-        for(int i=1; i<=10; i++)
+        for(int i=0; i<=usuariosGeneral.size(); i++)
         {
-            JCheckBox checkBox = new JCheckBox("Amigo " + i);
+            JCheckBox checkBox = new JCheckBox(usuariosGeneral.get(i).getNombre());
             checkBox.setAlignmentX(Component.CENTER_ALIGNMENT);
             pnlListaAmigos.add(checkBox);
             pnlListaAmigos.add(Box.createVerticalStrut(10));
@@ -96,6 +101,8 @@ public class FormModificarGrupo extends JFrame implements ActionListener
     {
         if(e.getSource()==btnModificarGrupo)   
         { 
+          ClienteHiloEscritura mGrupo = new ClienteHiloEscritura();
+          mGrupo.modificarGrupo(txtNombreGrupo.getText(), usuariosGeneral);
         }
     }
 }
