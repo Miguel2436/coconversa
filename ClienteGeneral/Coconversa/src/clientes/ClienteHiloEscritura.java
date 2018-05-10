@@ -180,10 +180,11 @@ public class ClienteHiloEscritura{
      * conectados y amigos desconectados.
      * @param Usuario usuario que desea ver su lista de amigos
      */
-    public void verAmigos(String Usuario)
+    public void solicitarAmigos(String Usuario)
     {
       Mensaje remove = new Mensaje();
-      remove.setOperacion("VER_AMIGOS");      
+      remove.setOperacion("SOLICITAR_AMIGOS");     
+      remove.setNombre(Usuario);
       try
         {
             OOS.writeObject(remove);
@@ -198,12 +199,12 @@ public class ClienteHiloEscritura{
      * @param Name Nombre del grupo a crear
      * @param Amigos Lista de amigos que serán agregados al grupo
      */
-    public void crearGrupo(String Name, List<Amistad> Amigos)
+   public void crearGrupo(String Name, List<Usuario> Amigos)
     {
       Mensaje cGroup = new Mensaje();
       cGroup.setOperacion("CREAR_GRUPO");
       cGroup.setNombre(Name);
-      cGroup.setListaAmistades(Amigos);
+      cGroup.setListaUsuarios(Amigos);
       try
         {
             OOS.writeObject(cGroup);
@@ -215,12 +216,12 @@ public class ClienteHiloEscritura{
      * @param Groupname Nombre de grupo a modificar
      * @param listaIntegrantesGrupo Lista de Integrantes de grupo actualizada
      */
-    public void modificarGrupo(String Groupname, List<IntegrantesGrupo> listaIntegrantesGrupo)
+    public void modificarGrupo(String Groupname, List<Usuario> listaIntegrantesGrupo)
     {
         Mensaje modificar = new Mensaje();
         modificar.setOperacion("MODIFICAR_GRUPO");
         modificar.setNombre(Groupname);
-        modificar.setListaIntegrantesGrupo(listaIntegrantesGrupo);
+        modificar.setListaUsuarios(listaIntegrantesGrupo);
         try{
             
             OOS.writeObject(modificar);
@@ -247,6 +248,21 @@ public class ClienteHiloEscritura{
         }
         
     }
+   
+    public  void salirGrupo(String Grupo)
+    {
+        Mensaje existe = new Mensaje();
+        existe.setOperacion("SALIR_GRUPO");
+        existe.setNombre(Grupo);
+        try{
+           //Ok entonces falta el metodo exacto,pues creemoslo <3
+            OOS.writeObject(existe);
+           
+        }catch (IOException ex) {
+        }
+    
+    }
+   
     /**
      * Pide al servidor que retorne la lista de usuarios de un grupo específico
      * @param GroupName Nombre de grupo a pedir integrantes de grupo
