@@ -17,6 +17,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -24,10 +26,9 @@ import java.util.HashMap;
  */
 public class HiloLectura extends Thread{
 
-    ServerSocket socket;
-    Escritura escritura;
-    ObjectOutputStream oos;
-    String nombreUsuario;
+    private ServerSocket socket;
+    private Escritura escritura;
+    private ObjectOutputStream oos;
     private HashMap<String, ObjectOutputStream> conexiones;
     public HiloLectura(ServerSocket socket, HashMap<String, ObjectOutputStream> conexiones, ObjectOutputStream oos) {
         this.socket = socket;
@@ -55,12 +56,13 @@ public class HiloLectura extends Thread{
                     Usuario usuario;
                     Conexion conexion;
                     Usuario usuario2;
+                    Usuario destinatario;
+                    Usuario remitente;
                     Grupo grupo;
                     switch (mensaje.getOperacion()) {
                         case "LOGIN":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
-                            nombreUsuario = mensaje.getNombre();
                             mensaje.setOperacion("LOGIN");
                             try {
                                 escritura.logIn(usuario, conexion);
@@ -72,7 +74,6 @@ public class HiloLectura extends Thread{
                         case "SIGNUP":
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
-                            nombreUsuario = mensaje.getNombre();
                             try {
                                 escritura.RegistroUsuario(usuario, conexion);
                                 mensaje.setEstado(true);
@@ -207,33 +208,55 @@ public class HiloLectura extends Thread{
                             break;
                         case "MENSAJE":
                             ObjectOutputStream oosDestinatario = conexiones.get(mensaje.getDestinatario());
-                            mensaje.setOperacion("MENSAJE_NUEVO");
-                            synchronized (oosDestinatario) {
-                                oosDestinatario.writeObject(mensaje);
+                            if (oosDestinatario == null) {
+                                mensaje.setEstado(false);
                             }
-                            //funcion de guardar mensaje en archivo
-                            mensaje.setOperacion("MENSAJE");
-                            mensaje.setEstado(true);
-                            oos.writeObject(mensaje);
+                            else{
+                                mensaje.setOperacion("MENSAJE_NUEVO");
+                                synchronized (oosDestinatario) {
+                                    oosDestinatario.writeObject(mensaje);
+                                }
+                                //funcion de guardar mensaje en archivo
+                                mensaje.setOperacion("MENSAJE");
+                                mensaje.setEstado(true);
+                                oos.writeObject(mensaje);
+                                destinatario = new Usuario(mensaje.getDestinatario(), "");
+                                remitente = new Usuario(mensaje.getRemitente(), "");
+                                Log.getInstancia().addMensaje(destinatario, remitente, mensaje.getMensaje());
+                            }
                             break;
                         case "MENSAJE_NUEVO":
                             oos.writeObject(mensaje);
                             break;
                         case "MENSAJE_A_GRUPO":
+                            grupo = new Grupo(0, mensaje.getNombre());
+                            List<Usuario> integrantes;
+                            mensaje.setEstado(true);
+                            try{
+                                integrantes = escritura.detallesGrupo(grupo);
+                                Iterator<Usuario> itr = integrantes.iterator();
+                                while(itr.hasNext()) {
+                                    Usuario us = itr.next();
+                                    ObjectOutputStream oosDestino = conexiones.get(us.getNombre());
+                                    synchronized (oosDestino){
+                                        oosDestino.writeObject(mensaje);
+                                    }
+                                }
+                            } catch (SQLException ex) {
+                                mensaje.setEstado(false);
+                            }
                             break;
                         case "GET_MENSAJES":
+                            destinatario = new Usuario(mensaje.getNombre(), "");
+                            remitente = new Usuario(mensaje.getRemitente(), "");
+                            mensaje.setListaMensajes(Log.getInstancia().getMensajes(destinatario, remitente));
                             break;
                         case "GET_MENSAJES_GRUPO":
+                            grupo = new Grupo(0, mensaje.getNombre());
+                            mensaje.setListaMensajes(Log.getInstancia().getMensajesGrupo(grupo));
                             break;
                         default:
                             break;
-                    }
-                    usuario = new Usuario(nombreUsuario, "");
-                    try {     
-                        escritura.notificacionesAmistad(usuario);
-                    } 
-                    catch(SQLException ex){
-                        mensaje.setEstado(false);
                     }
                     oos.writeObject(mensaje);
                 } catch (IOException ex) {
@@ -247,8 +270,3 @@ public class HiloLectura extends Thread{
         }
     }
 }
-
-            
-        
-       
-
