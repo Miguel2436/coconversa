@@ -494,7 +494,6 @@ public class FormChat extends JFrame implements ActionListener
                     String AmigoB= txtBuscarAmigosChat.getText();
                     CB.existeUsuario(AmigoB);
               }
-
          }
          if(ae.getSource()==btnEliminarAmigoConectadoChat)
          {

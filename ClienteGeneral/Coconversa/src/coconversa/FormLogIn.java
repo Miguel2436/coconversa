@@ -102,17 +102,10 @@ public class FormLogIn extends JFrame implements ActionListener
             else
             {
                 //Comentar
-                /*
+                
                 ClienteHiloEscritura log = new ClienteHiloEscritura();
                 log.logIn(txtNombre.getText(),txtContraseña.getText());
-                */
                 //Comentar
-                //Codigo
-                    FormChat Chat = new FormChat("Usuario");
-                    Chat.lblUsuarioChat.setText("Proyecto");
-                    Chat.setVisible(true);
-                //momentaneo
-                this.setVisible(false);
                
             }
         }

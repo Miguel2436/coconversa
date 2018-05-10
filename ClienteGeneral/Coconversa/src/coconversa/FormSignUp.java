@@ -133,7 +133,7 @@ public class FormSignUp extends JFrame implements ActionListener
                     }
                     else
                     {
-                        System.out.println("Las contraseñas no coinciden");
+                        //System.out.println("Las contraseñas no coinciden");
                         FormSignUpError SignUpError = new FormSignUpError();
                         SignUpError.setVisible(true);
                     }
