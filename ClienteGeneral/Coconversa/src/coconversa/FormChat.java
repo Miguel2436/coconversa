@@ -9,6 +9,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.sql.Time;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,7 +35,8 @@ import javax.swing.border.LineBorder;
 
 public class FormChat extends JFrame implements ActionListener
 {
-    public List<Usuario> ListUsuario = null;
+    private ObjectOutputStream OOS;
+    public List<Usuario> ListUsuario = new ArrayList();
     public List<chat> ChatsAbiertos; 
     public List<chat> ChatsGruposAbiertos;
     //---------PANEL CONVERSACIÓN----------------------------------------------
@@ -77,8 +80,9 @@ public class FormChat extends JFrame implements ActionListener
     public   DefaultListModel listModelGrupo = new DefaultListModel(); //Este usaré para acceder a los métodos de GRUPO
 
     
-    public FormChat(String NombreUsuario)
+    public FormChat(ObjectOutputStream OOS,String NombreUsuario)
     {
+        this.OOS = OOS;
         Usuario = NombreUsuario;
         configurar();
         componentes();
@@ -478,19 +482,19 @@ public class FormChat extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent ae) {
          if(ae.getSource()== btnSalirChat ){
-            this.setVisible(false);
-            System.exit(0);
-            /*
+            /*this.setVisible(false);
+            System.exit(0);*/
+            
             listModelGrupo.addElement("GrupoPrueba");
             listModelGrupo.addElement("hola");
-            listModel.addElement("Chemi");*/
+            listModel.addElement("Chemi");
          }
           if(ae.getSource()== btnBuscarAmigosChat){
               if(txtBuscarAmigosChat.getText().toString().equals("")){
                   FormErrorGeneral error = new FormErrorGeneral("Escribe un Usuario a buscar");
                   error.setVisible(true);
               }else{
-                    ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                    ClienteHiloEscritura CB = new ClienteHiloEscritura(OOS);
                     String AmigoB= txtBuscarAmigosChat.getText();
                     CB.existeUsuario(AmigoB);
               }
@@ -501,7 +505,7 @@ public class FormChat extends JFrame implements ActionListener
             if(listaAmigosConectadosChat.getSelectedValue()!=null)
             {
                 
-                ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                ClienteHiloEscritura CB = new ClienteHiloEscritura(OOS);
                 CB.eliminarAmigo(lblUsuarioChat.getText(), listaAmigosConectadosChat.getSelectedValue().toString());
             }else
             {
@@ -514,7 +518,7 @@ public class FormChat extends JFrame implements ActionListener
          {
             if(listaAmigosDesconectadosChat.getSelectedValue()!=null)
             {
-                ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                ClienteHiloEscritura CB = new ClienteHiloEscritura(OOS);
                 CB.eliminarAmigo(lblUsuarioChat.getText(), listaAmigosDesconectadosChat.getSelectedValue().toString());
             }else
             {
@@ -529,13 +533,12 @@ public class FormChat extends JFrame implements ActionListener
        if(ae.getSource()==btnCrearGruposChat) 
        {
            
-          ClienteHiloEscritura x = new ClienteHiloEscritura();
+          ClienteHiloEscritura x = new ClienteHiloEscritura(OOS);
           x.solicitarAmigos(lblUsuarioChat.getText());        
-          do{}while(ListUsuario == null); //Espera hasta que ListUsuario no sea null
+          //do{}while(ListUsuario == null); //Espera hasta que ListUsuario no sea null
           
              // modelo.setNombre("tugfa");   
-             // ListUsuario.add(modelo);
-         
+//             ListUsuario.add(modelo);
              FormCrearGrupo cGrupo = new FormCrearGrupo(ListUsuario);
              cGrupo.setVisible(true);
        }
@@ -545,7 +548,7 @@ public class FormChat extends JFrame implements ActionListener
        {
            if(listaGruposChat.getSelectedValue()!=null)
            {
-             ClienteHiloEscritura mGrupo = new ClienteHiloEscritura();
+             ClienteHiloEscritura mGrupo = new ClienteHiloEscritura(OOS);
              mGrupo.modificarGrupo(listaGruposChat.getSelectedValue().toString(), ListUsuario);
            }
            else
@@ -560,7 +563,7 @@ public class FormChat extends JFrame implements ActionListener
        {
          if(listaGruposChat.getSelectedValue()!=null)  
          {
-           ClienteHiloEscritura eGrupo = new ClienteHiloEscritura();  
+           ClienteHiloEscritura eGrupo = new ClienteHiloEscritura(OOS);  
            eGrupo.eliminarGrupo(listaGruposChat.getSelectedValue().toString());
          }
          else
@@ -575,7 +578,7 @@ public class FormChat extends JFrame implements ActionListener
        {
          if(listaGruposChat.getSelectedValue()!=null) 
          {
-           ClienteHiloEscritura sGrupo = new ClienteHiloEscritura(); 
+           ClienteHiloEscritura sGrupo = new ClienteHiloEscritura(OOS); 
            sGrupo.salirGrupo(listaGruposChat.getSelectedValue().toString());
          }
           else
@@ -591,7 +594,7 @@ public class FormChat extends JFrame implements ActionListener
             chat michat = new chat(listaGruposChat.getSelectedValue().toString(),true);
              ChatsGruposAbiertos.add(michat);
              tabMensajesChat.addTab(michat.nombre, michat.getPanel());  
-             ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura();
+             ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura(OOS);
              pedirmensajes.getMensajesGrupo(Usuario, michat.nombre);
            }else{
                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un Grupo para chatear");
@@ -603,7 +606,7 @@ public class FormChat extends JFrame implements ActionListener
              chat michat = new chat(listaAmigosConectadosChat.getSelectedValue().toString(),false);
              ChatsAbiertos.add(michat);
              tabMensajesChat.addTab(michat.nombre, michat.getPanel());  
-              ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura();
+              ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura(OOS);
               pedirmensajes.getMensajes(Usuario,michat.nombre);
            }else{
                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un amigo para chatear");
@@ -640,7 +643,7 @@ public  class chat{
                  FormErrorGeneral error = new FormErrorGeneral("Escribe un mensaje antes de enviarlo");
                  error.setVisible(true);
                 }else{
-                    ClienteHiloEscritura envio = new ClienteHiloEscritura();
+                    ClienteHiloEscritura envio = new ClienteHiloEscritura(OOS);
                     if(Grupo){
                         envio.enviarMensajeGrupo(nombre,Usuario,Mensaje);
                     }else{

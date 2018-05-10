@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.JButton;
@@ -20,8 +22,10 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
     private JButton btnRechazarAmigo;
     private String userD;
     private String userR;
-    public FormSolicitudAmigo(String Destinatario,String Remitente )
+    private ObjectOutputStream OOS;
+    public FormSolicitudAmigo(ObjectOutputStream OOS,String Destinatario,String Remitente )
     {
+        this.OOS = OOS;
         this.userD = Destinatario;
         this.userR = Remitente;
         configurar();
@@ -85,14 +89,14 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
     public void actionPerformed(ActionEvent e) 
     { if(e.getSource()==btnAceptarAmigo)   
         { 
-          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
+          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura(OOS);
           aceptarAmigo.respuestaAmigo(userD, userR, true);
           this.setVisible(false);
         }
         if(e.getSource()==btnRechazarAmigo)   
         { 
-          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura();
-          aceptarAmigo.respuestaAmigo(userD, userR, false);
+          ClienteHiloEscritura aceptarAmigo = new ClienteHiloEscritura(OOS);
+          aceptarAmigo.eliminarAmigo(userD,userR);
           this.setVisible(false);
         }
     }

@@ -3,6 +3,8 @@ package coconversa;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.JButton;
@@ -13,9 +15,11 @@ public class FormUsuarioRegistrado extends JFrame implements ActionListener
 {       
     private JLabel lblUsuarioRegistrado, lblExitosamente;
     private JButton btnIniciarSesion;
+    private ObjectOutputStream OOS;
     
-    public FormUsuarioRegistrado()
+    public FormUsuarioRegistrado(ObjectOutputStream OOS)
     {
+        this.OOS = OOS;
         configurar();
         componentes();
     }
@@ -66,7 +70,7 @@ public class FormUsuarioRegistrado extends JFrame implements ActionListener
         if (ae.getSource()==btnIniciarSesion)
         {
             this.setVisible(false);
-            FormLogIn LogIn = new FormLogIn();
+            FormLogIn LogIn = new FormLogIn(OOS);
             LogIn.setVisible(true);
         }
     }

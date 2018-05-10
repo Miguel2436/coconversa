@@ -36,8 +36,8 @@ public class Clientes {
         } catch (IOException ex) {
         
         }
-        ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket);
-        Escritura.solicitarConexion(ipServidor);
+        //ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket);
+//        Escritura.solicitarConexion(ipServidor);
         ObjectInputStream OIS = null;
         try {
             OIS = new ObjectInputStream(clienteSocket.getInputStream());
@@ -67,8 +67,8 @@ public class Clientes {
         }*/
         hiloLectura.start();
         //Formulario
-        ClienteHiloEscritura Esc = new ClienteHiloEscritura(clienteSocket);
-        Escritura.solicitarConexion(ipServidor);
+        //ClienteHiloEscritura Esc = new ClienteHiloEscritura(clienteSocket);
+//        Escritura.solicitarConexion(ipServidor);
         //
         //
     }

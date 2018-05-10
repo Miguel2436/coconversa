@@ -26,15 +26,7 @@ public class Mensaje implements Serializable{
    private List<Grupo> listaGrupos;
    private List<IntegrantesGrupo> listaIntegrantesGrupo;
    private List<Usuario> listaUsuarios;
-   private List<String> listMensajes;
-
-    public List<String> getListMensajes() {
-        return listMensajes;
-    }
-
-    public void setListMensajes(List<String> listMensajes) {
-        this.listMensajes = listMensajes;
-    }
+   private List<String> listaMensajes;
     /**
      * Obtiene el valor de operacion
      * Este indica al receptor la operacion a realizar con
@@ -248,5 +240,20 @@ public class Mensaje implements Serializable{
         this.destinatario = destinatario;
         this.mensaje = mensaje;
     }
+    /**
+     * Obtiene la lista de mensajes
+     * @return lista de mensajes
+     */
+    public List<String> getListaMensajes() {
+        return listaMensajes;
+    }
+    /**
+     * Asigna la lista de mensajes
+     * @param listaMensajes La lista de mensajes a asignar
+     */
+    public void setListaMensajes(List<String> listaMensajes) {
+        this.listaMensajes = listaMensajes;
+    }
+    
     
 }

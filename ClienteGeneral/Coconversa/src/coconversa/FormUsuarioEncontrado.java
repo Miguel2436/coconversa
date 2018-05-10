@@ -4,6 +4,7 @@ import clientes.ClienteHiloEscritura;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectOutputStream;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.JButton;
@@ -15,8 +16,10 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
     private JLabel lblUsuarioEncontrado, lblAgregarUsuario;
     private JButton btnSiAgregarUsuario, btnNoAgregarUsuario;
     private String User;
-    public FormUsuarioEncontrado(String Usuario)
+    private ObjectOutputStream OOS;
+    public FormUsuarioEncontrado(ObjectOutputStream OOS,String Usuario)
     {
+        this.OOS = OOS;
         this.User = Usuario;
         configurar();
         componentes(Usuario);
@@ -33,13 +36,16 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
     
     public void componentes(String Usuario)
     {
-        lblUsuarioEncontrado = new JLabel("Â¡El usuario" + User + " ha sido encontrado!");
+        lblUsuarioEncontrado = new JLabel("¡El usuario" + User + " ha sido encontrado!");
         lblUsuarioEncontrado.setFont(new Font("Calibri (Cuerpo)", Font.BOLD ,18));
         
-        lblAgregarUsuario = new JLabel("Â¿Quieres Agregarlo?");
+        lblAgregarUsuario = new JLabel("¿Quieres Agregarlo?");
         
         btnSiAgregarUsuario = new JButton("Si");
+        btnSiAgregarUsuario.addActionListener(this);
         btnNoAgregarUsuario = new JButton("No");
+        btnNoAgregarUsuario.addActionListener(this);
+    
 
         GroupLayout contentPane = new GroupLayout(this.getContentPane());
         contentPane.setAutoCreateContainerGaps(true);
@@ -80,8 +86,9 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
     {
         if (ae.getSource()==btnSiAgregarUsuario)
         {
-          ClienteHiloEscritura findFriend = new ClienteHiloEscritura();
+          ClienteHiloEscritura findFriend = new ClienteHiloEscritura(OOS);
           findFriend.agregarAmigo(User);
+          this.setVisible(false);
           
         }
         if (ae.getSource()==btnNoAgregarUsuario)

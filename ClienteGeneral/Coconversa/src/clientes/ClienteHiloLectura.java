@@ -18,6 +18,7 @@ import datos.Mensaje;
 import datos.Usuario;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
@@ -33,14 +34,16 @@ public class ClienteHiloLectura implements Runnable
     
     private Socket clientesSocketLectura; 
     private String Valor;
+    private ObjectOutputStream OOS;
     private ObjectInputStream OIS;
     private Mensaje Paquete;
     private FormChat Chat = null ;
     public ClienteHiloLectura (){
    }
    
-   public ClienteHiloLectura (Socket socketParametro,FormChat Chat) throws IOException{
+   public ClienteHiloLectura (ObjectOutputStream OOS, Socket socketParametro,FormChat Chat) throws IOException{
         this.clientesSocketLectura = socketParametro;
+        this.OOS = OOS;
         this.OIS = new  ObjectInputStream (socketParametro.getInputStream());
         Paquete = new Mensaje();
         this.Chat = Chat;
@@ -59,25 +62,25 @@ public class ClienteHiloLectura implements Runnable
                             Chat.setVisible(true);
                         }else{
                             FormErrorGeneral error = new FormErrorGeneral("Datos Usuarios Incorrectos");
-                            FormLogIn LogIn = new FormLogIn();
+                            FormLogIn LogIn = new FormLogIn(OOS);
                             LogIn.setVisible(true);
                         }
                     break;
                     
                     case"SIGNUP":
                         if(Paquete.isEstado()){
-                            FormUsuarioRegistrado UsuarioRegistrado = new FormUsuarioRegistrado();
+                            FormUsuarioRegistrado UsuarioRegistrado = new FormUsuarioRegistrado(OOS);
                             UsuarioRegistrado.setVisible(true);   
                         }else{
                             FormErrorGeneral error = new FormErrorGeneral("Fallo Registro,Cuenta ya existente");
                             error.setVisible(true);
-                            FormLogIn login = new FormLogIn();
+                            FormLogIn login = new FormLogIn(OOS);
                             login.setVisible(true);
                         }
                     break;
                     case"EXISTE_USUARIO":
                         if(Paquete.isEstado()){
-                            FormUsuarioEncontrado UsuarioEncontrado = new FormUsuarioEncontrado(Paquete.getNombre());
+                            FormUsuarioEncontrado UsuarioEncontrado = new FormUsuarioEncontrado(OOS,Paquete.getNombre());
                             UsuarioEncontrado.setVisible(true);
                             }else{
                             FormUsuarioNoEncontrado UsuarioE = new FormUsuarioNoEncontrado();
@@ -85,8 +88,20 @@ public class ClienteHiloLectura implements Runnable
                         }
                     break;
                     case"AGREGAR_AMIGO":
-                        FormSolicitudAmigo x = new FormSolicitudAmigo(Paquete.getNombre(),Chat.lblUsuarioChat.getText());
-                        x.setVisible(true);
+                        if(!Paquete.isEstado()){
+                            FormErrorGeneral ERRORG = new FormErrorGeneral("Error envio solicitud");
+                            ERRORG.setVisible(true);
+                        }
+                        /*
+                        FormSolicitudAmigo x = new FormSolicitudAmigo(OOS,Paquete.getNombre(),Chat.lblUsuarioChat.getText());
+                        x.setVisible(true);*/
+                    break;
+                    case"NOTIFICACIONES":
+                        for(int p=0; p<Paquete.getListaUsuarios().size();p++){
+                            Paquete.getListaUsuarios().get(p);
+                            FormSolicitudAmigo solicitud = new FormSolicitudAmigo(OOS,Chat.Usuario,Paquete.getListaUsuarios().get(p).getNombre());
+                            solicitud.setVisible(true);
+                        }
                     break;
                     case"CREAR_GRUPO":
                       if(Paquete.isEstado())
@@ -106,7 +121,7 @@ public class ClienteHiloLectura implements Runnable
                             Chat.listModelGrupo.clear();
                             FormExitosoGeneral exito= new FormExitosoGeneral("Grupo Eliminado");
                             exito.setVisible(true);
-                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura(OOS);
                             CE.verGrupos(Chat.lblUsuarioChat.getText());
                         }
                     break;
@@ -116,7 +131,7 @@ public class ClienteHiloLectura implements Runnable
                             Chat.listModelGrupo.clear();
                             FormExitosoGeneral exito = new FormExitosoGeneral("Saliste del grupo");
                             exito.setVisible(true);
-                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura(OOS);
                             CE.verGrupos(Chat.lblUsuarioChat.getText());
                         }
                     break;
@@ -126,7 +141,7 @@ public class ClienteHiloLectura implements Runnable
                             Chat.listModelGrupo.clear();
                             FormExitosoGeneral exito = new FormExitosoGeneral("Grupo Modificado");
                             exito.setVisible(true);
-                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura(OOS);
                             CE.verGrupos(Chat.lblUsuarioChat.getText());
                         }
                     break;
@@ -166,7 +181,7 @@ public class ClienteHiloLectura implements Runnable
                         boolean Creado2 = false;
                         int j = 0;
                         String R2 = Paquete.getRemitente();
-                        List<String> Mensajes = Paquete.getListMensajes();
+                        List<String> Mensajes = Paquete.getListaMensajes();
                         for(j = 0; j<Chat.ChatsAbiertos.size();j++){
                             if(Chat.ChatsAbiertos.get(j).nombre.equals(R2)){
                                 for(int m = 0; m< Mensajes.size();m++){
@@ -186,7 +201,7 @@ public class ClienteHiloLectura implements Runnable
                         boolean CreadoG = false;
                         int j2 = 0;
                         String R2g = Paquete.getRemitente();
-                        List<String> MensajesG = Paquete.getListMensajes();
+                        List<String> MensajesG = Paquete.getListaMensajes();
                         for(j2 = 0; j2<Chat.ChatsGruposAbiertos.size();j2++){
                             if(Chat.ChatsGruposAbiertos.get(j2).nombre.equals(R2g)){
                                 for(int m = 0; m< MensajesG.size();m++){
@@ -207,9 +222,13 @@ public class ClienteHiloLectura implements Runnable
                         {
                             FormExitosoGeneral exito= new FormExitosoGeneral("Registro Eliminado");
                             exito.setVisible(true);
-                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            /*
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura(OOS);
                             CE.amigosConectados(Chat.Usuario);
-                            CE.amigosDesconectados(Chat.Usuario);
+                            CE.amigosDesconectados(Chat.Usuario);*/
+                        }else{
+                            FormErrorGeneral errorA = new FormErrorGeneral("Error: Eliminando Amigo");
+                            errorA.setVisible(true);
                         }
                     break;
                     case"AMIGOS_CONECTADOS":
@@ -241,6 +260,9 @@ public class ClienteHiloLectura implements Runnable
                         errorx.setVisible(true);
                     break;
                 }
+                ClienteHiloEscritura pedirC = new ClienteHiloEscritura(OOS);
+                pedirC.amigosConectados(Chat.Usuario);
+                pedirC.amigosDesconectados(Chat.Usuario);
             } catch (IOException ex) {
                 //Fallo conexion Server,mandar mensaje error y reiniciar 
             } catch (ClassNotFoundException ex) {

@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Arrays;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -23,9 +25,11 @@ public class FormSignUp extends JFrame implements ActionListener
     private JTextField txtNombre;
     private JPasswordField txtContraseña, txtConfContraseña;
     private JButton btnIniciarSesion, btnRegistrarse;   
+    private ObjectOutputStream OOS;
     
-    public FormSignUp()
+    public FormSignUp(ObjectOutputStream OOS)
     {
+        this.OOS = OOS;
         configurar();
         componentes();
     }
@@ -102,7 +106,7 @@ public class FormSignUp extends JFrame implements ActionListener
         if(ae.getSource()==btnIniciarSesion)
         {
             this.setVisible(false);
-            FormLogIn LogIn = new FormLogIn();
+            FormLogIn LogIn = new FormLogIn(OOS);
             LogIn.setVisible(true);
         }
         if(ae.getSource()==btnRegistrarse)
@@ -128,7 +132,7 @@ public class FormSignUp extends JFrame implements ActionListener
                     {
                         
                         this.setVisible(false);
-                        ClienteHiloEscritura Escribir = new ClienteHiloEscritura();
+                        ClienteHiloEscritura Escribir = new ClienteHiloEscritura(OOS);
                         Escribir.signUp(txtNombre.getText(),Contraseña2);
                     }
                     else

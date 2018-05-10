@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
     private JLabel lblIPSolicitudConexion;
     private JTextField txtIPsolicitudConexion;
     private JButton btnEnviarSolicitudConexion;
-    
+    private ObjectOutputStream  OOS;
     public FormSolicitudConexion()
     {
         configurar();
@@ -98,7 +99,7 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                         Socket clienteSocket =  null;
                         try {
                             clienteSocket = new Socket(ipServidor,1000);
-                            ClienteHiloEscritura Escritura = new ClienteHiloEscritura(clienteSocket);
+                            ClienteHiloEscritura Escritura = new ClienteHiloEscritura(new ObjectOutputStream (clienteSocket.getOutputStream()));
                             Escritura.solicitarConexion(ipServidor);
                         } catch (IOException ex) {
                             FormErrorGeneral error = new FormErrorGeneral("Error conexion a "+ ipServidor);
@@ -132,19 +133,23 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                                 FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
                                 error.setVisible(true);
                             } catch (IOException ex) {
-                                FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion");
+                                FormErrorGeneral error = new FormErrorGeneral("Error proceso Conexion IOException");
                                 error.setVisible(true);
                             }
                             Thread hiloLectura = null;
-                            FormChat Chat = new FormChat("Usuario");
                             try {
-                                hiloLectura = new Thread(new ClienteHiloLectura(clienteS,Chat));
+                                OOS = new ObjectOutputStream(clienteS.getOutputStream());
+                            } catch (IOException ex) {
+                            }
+                            FormChat Chat = new FormChat(OOS,"Usuario");
+                            try {
+                                hiloLectura = new Thread(new ClienteHiloLectura(OOS,clienteS,Chat));
                             } catch (IOException ex) {
                                 FormErrorGeneral error = new FormErrorGeneral("Error: "+ex.getMessage());
                                 error.setVisible(true);
                             } 
                             hiloLectura.start();
-                            FormLogIn LogIn = new FormLogIn();
+                            FormLogIn LogIn = new FormLogIn(OOS);
                             LogIn.setVisible(true);
                             this.setVisible(false); 
                         }  

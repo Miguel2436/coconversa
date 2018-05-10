@@ -37,12 +37,9 @@ public class ClienteHiloEscritura{
    
    
    }
-   public ClienteHiloEscritura (Socket socketParametro){
-        this.clientesSocketEscritura=socketParametro;
-       try {
-           this.OOS = new ObjectOutputStream(clientesSocketEscritura.getOutputStream());
-       } catch (IOException ex) {
-       }
+   public ClienteHiloEscritura (ObjectOutputStream OOS){
+       //this.clientesSocketEscritura=socketParametro;
+       this.OOS = OOS;
    }
    
    ////Funciones de conexion
@@ -59,12 +56,7 @@ public class ClienteHiloEscritura{
         try{
             OOS.writeObject(conexion);
         }catch (IOException ex) {
-            try {
-                clientesSocketEscritura.close();
-                clientesSocketEscritura = null;
-            } catch (IOException ex1) {
-                clientesSocketEscritura = null;
-            }
+           
             FormSolicitudConexion conex = new FormSolicitudConexion();
             conex.setVisible(true);
             FormErrorGeneral error = new FormErrorGeneral("Fallo local solicitando conexion a "+ serverIp);
@@ -87,12 +79,12 @@ public class ClienteHiloEscritura{
             log.setRemitente(localIp);
             OOS.writeObject(log);
         } catch (UnknownHostException ex){
-            FormLogIn log1 = new FormLogIn();
+            FormLogIn log1 = new FormLogIn(OOS);
             log1.setVisible(true);
             FormErrorGeneral error = new FormErrorGeneral("Fallo Obtencion Ip Local");
             error.setVisible(true);
         }catch (IOException ex) {
-           FormLogIn log2 = new FormLogIn();
+           FormLogIn log2 = new FormLogIn(OOS);
            log2.setVisible(true);
            FormErrorGeneral error = new FormErrorGeneral("Fallo Envio credenciales, verifique su conexion");
            error.setVisible(true);
@@ -109,11 +101,12 @@ public class ClienteHiloEscritura{
         sign.setNombre(Username);
         sign.setMensaje(Pass);
         try{
-            OOS.writeObject(sign);
+                OOS.writeObject(sign);
         }catch (IOException ex) {
+            System.out.println(ex.getMessage());
             FormErrorGeneral error = new FormErrorGeneral("Fallo Envio credenciales, verifique su conexion");
            error.setVisible(true);
-           FormSignUp form = new FormSignUp();
+           FormSignUp form = new FormSignUp(OOS);
            form.setVisible(true);
         }
     }
@@ -148,9 +141,9 @@ public class ClienteHiloEscritura{
     public void respuestaAmigo(String username,String amigo,boolean respuesta)
     {
         Mensaje add = new Mensaje();
-        add.setOperacion("RESPUESTA_AMIGO");
-        add.setRemitente(username);
-        add.setDestinatario(amigo);
+        add.setOperacion("ACEPTAR_AMIGO");
+        add.setDestinatario(username);
+        add.setRemitente(amigo);
         add.setEstado(respuesta);
         try
         {
@@ -167,8 +160,8 @@ public class ClienteHiloEscritura{
     {
       Mensaje remove = new Mensaje();
       remove.setOperacion("ELIMINAR_AMIGO");
-      remove.setNombre(amigo);
-      remove.setRemitente(Usuario);
+      remove.setRemitente(amigo);
+      remove.setDestinatario(Usuario);
       
       try
         {
