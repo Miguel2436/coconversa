@@ -13,6 +13,7 @@ import coconversa.FormSolicitudAmigo;
 import coconversa.FormUsuarioEncontrado;
 import coconversa.FormUsuarioNoEncontrado;
 import coconversa.FormUsuarioRegistrado;
+import datos.Grupo;
 import datos.Mensaje;
 import datos.Usuario;
 import java.io.IOException;
@@ -142,10 +143,24 @@ public class ClienteHiloLectura implements Runnable
                             }
                         }
                         if(!Creado){
-                            Chat.chatCreador(Paquete.getRemitente());
+                            Chat.chatCreador(Paquete.getRemitente(),false);
                             Chat.ChatsAbiertos.get(k).AreaChat.append("\n"+Paquete.getMensaje());
                         }
                         
+                    break;
+                    case"MENSAJE_A_GRUPO":
+                        boolean CreadoG1 = false;
+                        int n = 0;
+                        for(n=0; n<Chat.ChatsGruposAbiertos.size();n++){
+                            if(Chat.ChatsGruposAbiertos.get(n).nombre.equals(Paquete.getRemitente())){
+                                Chat.ChatsGruposAbiertos.get(n).AreaChat.append("\n"+Paquete.getMensaje());
+                                CreadoG1 = true;
+                            }
+                        }
+                        if(!CreadoG1){
+                            Chat.chatCreador(Paquete.getRemitente(),false);
+                            Chat.ChatsGruposAbiertos.get(n).AreaChat.append("\n"+Paquete.getMensaje());
+                        }
                     break;
                     case"GET_MENSAJES":       
                         boolean Creado2 = false;
@@ -161,14 +176,31 @@ public class ClienteHiloLectura implements Runnable
                             }                
                         }
                         if(!Creado2){
-                            Chat.chatCreador(Paquete.getRemitente());
+                            Chat.chatCreador(Paquete.getRemitente(),false);
                             for(int m = 0; m< Mensajes.size();m++){
                                 Chat.ChatsAbiertos.get(j).AreaChat.append("\n"+ Mensajes.get(m));   
                             }  
                         }
                     break;
                     case"GET_MENSAJES_GRUPO":
-                        //Regresa los anteriores mensajes
+                        boolean CreadoG = false;
+                        int j2 = 0;
+                        String R2g = Paquete.getRemitente();
+                        List<String> MensajesG = Paquete.getListMensajes();
+                        for(j2 = 0; j2<Chat.ChatsGruposAbiertos.size();j2++){
+                            if(Chat.ChatsGruposAbiertos.get(j2).nombre.equals(R2g)){
+                                for(int m = 0; m< MensajesG.size();m++){
+                                   Chat.ChatsGruposAbiertos.get(j2).AreaChat.append("\n"+ MensajesG.get(m));   
+                                }  
+                                CreadoG = true;
+                            }                
+                        }
+                        if(!CreadoG){
+                            Chat.chatCreador(Paquete.getRemitente(),true);
+                            for(int m = 0; m< MensajesG.size();m++){
+                                Chat.ChatsGruposAbiertos.get(j2).AreaChat.append("\n"+ MensajesG.get(m));   
+                            }  
+                        }
                     break;
                     case"ELIMINAR_AMIGO":
                         if(Paquete.isEstado())

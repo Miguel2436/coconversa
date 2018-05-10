@@ -14,6 +14,7 @@ import coconversa.FormUsuarioRegistrado;
 import datos.Amistad;
 import datos.IntegrantesGrupo;
 import datos.Mensaje;
+import datos.Usuario;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -365,7 +366,6 @@ public class ClienteHiloEscritura{
         existe.setOperacion("EXISTE_USUARIO");
         existe.setNombre(Username);
         try{
-           
             OOS.writeObject(existe);
            
         }catch (IOException ex) {

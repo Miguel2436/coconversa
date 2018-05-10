@@ -2,6 +2,7 @@ package coconversa;
 
 import clientes.ClienteHiloEscritura;
 import datos.Mensaje;
+import datos.Usuario;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,6 +35,7 @@ public class FormChat extends JFrame implements ActionListener
 {
     public List<Usuario> ListUsuario = null;
     public List<chat> ChatsAbiertos; 
+    public List<chat> ChatsGruposAbiertos;
     //---------PANEL CONVERSACIÓN----------------------------------------------
     private JTextField txtMensajesChat;
     private JButton btnEnviarChat,btnSalirChat;
@@ -85,6 +87,7 @@ public class FormChat extends JFrame implements ActionListener
     public void configurar()
     {
         ChatsAbiertos = new ArrayList(); 
+        ChatsGruposAbiertos = new ArrayList();
         this.setTitle("Coconversa");
         this.setSize(1100,450);
         this.setMinimumSize(new Dimension(1100,450));
@@ -159,6 +162,7 @@ public class FormChat extends JFrame implements ActionListener
         lblAmigosChat=new JLabel("Amigos");
 //        lblAmigosConectadosChat=new JLabel(AmigosConectados);
         btnBuscarAmigosChat= new JButton("Buscar");
+        btnBuscarAmigosChat.addActionListener(this);
         btnMensajeAmigoChat= new JButton("Mensaje");
         btnEliminarAmigoConectadoChat= new JButton("Eliminar");
         btnEliminarAmigoConectadoChat.addActionListener(this);
@@ -168,8 +172,9 @@ public class FormChat extends JFrame implements ActionListener
         
         //-------------AMIGOS CONECTADOS-----------------------------------------------------
         //BORRAR
+        /*
         listModel.addElement("Dogo");
-        listModel.addElement("Jose");
+        listModel.addElement("Jose");*/
          listaAmigosConectadosChat= new JList(listModel);
         panelListaAmigosConectadosChat=new JPanel();
         scrAmigosConectadosChat = new JScrollPane(panelListaAmigosConectadosChat);
@@ -352,7 +357,39 @@ public class FormChat extends JFrame implements ActionListener
         panelListaGruposChat.add(btnSalirGruposChat);
         panelListaGruposChat.add(Box.createHorizontalStrut(10));
         panelListaGruposChat.add(btnEliminarGruposChat); 
-          
+        
+        GroupLayout listasGruposChat = new GroupLayout(panelListaGruposChat);
+        listasGruposChat.setAutoCreateContainerGaps(true);
+        listasGruposChat.setAutoCreateGaps(true);
+        listasGruposChat.setHorizontalGroup
+        (
+            listasGruposChat.createParallelGroup()
+                    .addGroup
+            (
+                listasGruposChat.createSequentialGroup()
+                .addComponent(btnMensajeGruposChat)
+                .addComponent(btnModificarGruposChat)
+                .addComponent(btnSalirGruposChat)
+                .addComponent(btnEliminarGruposChat)
+            )
+            .addComponent(listaGruposChat)
+        );
+        
+        listasGruposChat.setVerticalGroup
+        (
+            listasGruposChat.createSequentialGroup()
+                    .addGroup
+            (
+                listasGruposChat.createParallelGroup()
+                .addComponent(btnMensajeGruposChat)
+                .addComponent(btnModificarGruposChat)
+                .addComponent(btnSalirGruposChat)
+                .addComponent(btnEliminarGruposChat)
+            )
+            .addComponent(listaGruposChat)
+        );
+        panelListaGruposChat.setLayout(listasGruposChat);
+        
         panelGruposChat=new JPanel();
         panelGruposChat.setBorder(new LineBorder(Color.BLUE));
        
@@ -426,23 +463,38 @@ public class FormChat extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-    public void chatCreador(String Amigo){
-        chat michat = new chat(Amigo);
-        ChatsAbiertos.add(michat);
+    public void chatCreador(String Amigo,boolean grupo){
+        chat michat;
+        if(grupo){
+          michat = new chat(Amigo,true);
+         ChatsGruposAbiertos.add(michat);
+        }else{
+         michat = new chat(Amigo,false);
+         ChatsAbiertos.add(michat);   
+        }
         tabMensajesChat.addTab(michat.nombre, michat.getPanel());
         //michat.AreaChat.append("\n"+Mensaje);
     }
     @Override
     public void actionPerformed(ActionEvent ae) {
          if(ae.getSource()== btnSalirChat ){
-            /*this.setVisible(false);
-            System.exit(0);*/
+            this.setVisible(false);
+            System.exit(0);
+            /*
+            listModelGrupo.addElement("GrupoPrueba");
+            listModelGrupo.addElement("hola");
+            listModel.addElement("Chemi");*/
          }
           if(ae.getSource()== btnBuscarAmigosChat){
-             ClienteHiloEscritura CB = new ClienteHiloEscritura();
-             String AmigoB= txtBuscarAmigosChat.getText();
-             CB.existeUsuario(AmigoB);
-        
+              if(txtBuscarAmigosChat.getText().toString().equals("")){
+                  FormErrorGeneral error = new FormErrorGeneral("Escribe un Usuario a buscar");
+                  error.setVisible(true);
+              }else{
+                    ClienteHiloEscritura CB = new ClienteHiloEscritura();
+                    String AmigoB= txtBuscarAmigosChat.getText();
+                    CB.existeUsuario(AmigoB);
+              }
+
          }
          if(ae.getSource()==btnEliminarAmigoConectadoChat)
          {
@@ -472,6 +524,7 @@ public class FormChat extends JFrame implements ActionListener
             }
              
          }
+        
          //-----------------------------CONDICIONES DE GRUPOS-------------------------------------------------
          //CONDICIÓN SI EL BOTON DE CREAR GRUPO ES ACCIONADO
        if(ae.getSource()==btnCrearGruposChat) 
@@ -534,9 +587,21 @@ public class FormChat extends JFrame implements ActionListener
             }
        }
        //-----------------------------CONDICIONES DE CHAT-------------------------------------------------
+       if(ae.getSource()==btnMensajeGruposChat){
+           if(listaGruposChat.getSelectedValue()!=null){  
+            chat michat = new chat(listaGruposChat.getSelectedValue().toString(),true);
+             ChatsGruposAbiertos.add(michat);
+             tabMensajesChat.addTab(michat.nombre, michat.getPanel());  
+             ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura();
+             pedirmensajes.getMensajesGrupo(Usuario, michat.nombre);
+           }else{
+               FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un Grupo para chatear");
+               FEG.setVisible(true);
+           }
+        }
          if(ae.getSource() == btnMensajeAmigoChat){
            if(listaAmigosConectadosChat.getSelectedValue()!=null){
-             chat michat = new chat(listaAmigosConectadosChat.getSelectedValue().toString());
+             chat michat = new chat(listaAmigosConectadosChat.getSelectedValue().toString(),false);
              ChatsAbiertos.add(michat);
              tabMensajesChat.addTab(michat.nombre, michat.getPanel());  
               ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura();
@@ -554,18 +619,17 @@ public  class chat{
     JTextField txtMensajes;
     public String nombre;
     public JTextArea AreaChat;
+    public boolean Grupo; 
    
-    chat(String nombre){
+    chat(String nombre,boolean grupo){
         this.nombre=nombre;
+        this.Grupo = grupo;
     }
     
     public JPanel getPanel(){
          //Genra acomodo de componentes
         AreaChat = new JTextArea();
         AreaChat.setEditable(false);
-        /*AreaChat.append("Hola");
-        
-        AreaChat.append("\nGraduado");*/
         
         txtMensajes = new JTextField();
         btnEnviar = new JButton("Enviar");
@@ -578,8 +642,11 @@ public  class chat{
                  error.setVisible(true);
                 }else{
                     ClienteHiloEscritura envio = new ClienteHiloEscritura();
-                    //envio.enviarMensajeChat(nombre,Usuario,Mensaje);
-                    
+                    if(Grupo){
+                        envio.enviarMensajeGrupo(nombre,Usuario,Mensaje);
+                    }else{
+                        envio.enviarMensajeChat(nombre,Usuario,Mensaje);
+                    } 
                     AreaChat.append("\n" +"[" +Time.from(Instant.now())+"] "+Usuario +" : "+ txtMensajes.getText());
                     txtMensajes.setText("");
                     
