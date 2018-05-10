@@ -5,6 +5,8 @@
  */
 package datos;
 
+import java.sql.Time;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class LogGrupo {
     public LogGrupo() {
     }
 
-    public LogGrupo(Grupo grupo, List<Usuario> usuarios, List<String> mensajes) {
+    public LogGrupo(Grupo grupo, List<Usuario> usuarios) {
         this.grupo = grupo;
         this.usuarios = usuarios;
         this.mensajes = new ArrayList<String>();
@@ -49,7 +51,9 @@ public class LogGrupo {
     public void setMensajes(List<String> mensajes) {
         this.mensajes = mensajes;
     }
-    
+    public void addMensaje(Usuario remitente, String mensaje){
+        mensajes.add(remitente.getNombre() + Time.from(Instant.now()).toString() + ": " + mensaje);
+    }
     
     
 }

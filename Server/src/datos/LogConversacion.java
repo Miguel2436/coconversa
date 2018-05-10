@@ -5,6 +5,8 @@
  */
 package datos;
 
+import java.sql.Time;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,33 +15,23 @@ import java.util.List;
  * @author Usuario
  */
 public class LogConversacion {
-    private Usuario usuario1;
-    private Usuario usuario2;
+    private Usuario remitente;
     List<String> mensajes;
 
     public LogConversacion() {
     }
 
-    public LogConversacion(Usuario usuario1, Usuario usuario2, List<String> mensajes) {
-        this.usuario1 = usuario1;
-        this.usuario2 = usuario2;
+    public LogConversacion(Usuario remitente) {
+        this.remitente = remitente;
         this.mensajes = new ArrayList<>();
     }
 
-    public Usuario getUsuario1() {
-        return usuario1;
+    public Usuario getRemitente() {
+        return remitente;
     }
 
-    public void setUsuario1(Usuario usuario1) {
-        this.usuario1 = usuario1;
-    }
-
-    public Usuario getUsuario2() {
-        return usuario2;
-    }
-
-    public void setUsuario2(Usuario usuario2) {
-        this.usuario2 = usuario2;
+    public void setRemitente(Usuario remitente) {
+        this.remitente = remitente;
     }
 
     public List<String> getMensajes() {
@@ -49,7 +41,9 @@ public class LogConversacion {
     public void setMensajes(List<String> mensajes) {
         this.mensajes = mensajes;
     }
-    
+    public void addMensaje(String mensaje) {
+        mensajes.add("[" + Time.from(Instant.now()) + "]: " + mensaje);
+    }
     
     
 }
