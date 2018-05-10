@@ -27,15 +27,14 @@ public class FormUsuarioNoEncontrado extends JFrame implements ActionListener
         this.setSize(350,250);
         setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
     }
     
     public void componentes()
     {
-        lblUsuarioNoEncontrado = new JLabel("Â¡Ups! El usuario no ha sido encontrado");
+        lblUsuarioNoEncontrado = new JLabel("¡Ups! El usuario no ha sido encontrado");
         lblUsuarioNoEncontrado.setFont(new Font ("Calibri (Cuerpo)", Font.BOLD ,18));
         
-        lblSeLlamaAsi = new JLabel("Â¿Estas seguro que se llama asi?");
+        lblSeLlamaAsi = new JLabel("¿Estas seguro que se llama asi?");
         
         btnBuscarDeNuevo = new JButton("Buscar de nuevo");
         btnBuscarDeNuevo.addActionListener(this);

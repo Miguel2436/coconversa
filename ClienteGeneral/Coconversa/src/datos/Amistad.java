@@ -5,12 +5,14 @@
  */
 package datos;
 
+import java.io.Serializable;
+
 /**
  * Esta clase contiene las propiedades y metodos necesarios para igualar la
  * tabla Amistad de la BD con objetos utiles. 
  * @author Leonardo Martinez
  */
-public class Amistad {    
+public class Amistad implements Serializable{    
     private int idAmistad;
     private String solicitante;
     private String solicitado;

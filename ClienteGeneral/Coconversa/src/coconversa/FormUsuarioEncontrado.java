@@ -15,12 +15,13 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
 {
     private JLabel lblUsuarioEncontrado, lblAgregarUsuario;
     private JButton btnSiAgregarUsuario, btnNoAgregarUsuario;
-    private String User;
+    private String User,Amigo;
     private ObjectOutputStream OOS;
-    public FormUsuarioEncontrado(ObjectOutputStream OOS,String Usuario)
+    public FormUsuarioEncontrado(ObjectOutputStream OOS,String Usuario,String amigo)
     {
         this.OOS = OOS;
         this.User = Usuario;
+        this.Amigo = amigo;
         configurar();
         componentes(Usuario);
     }
@@ -30,13 +31,12 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
         this.setTitle("Buscar Amigo");
         this.setSize(350,250);
         setLocationRelativeTo(null);
-        this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
+        this.setResizable(false);   
     }
     
     public void componentes(String Usuario)
     {
-        lblUsuarioEncontrado = new JLabel("¡El usuario" + User + " ha sido encontrado!");
+        lblUsuarioEncontrado = new JLabel("¡El usuario " + User + " ha sido encontrado!");
         lblUsuarioEncontrado.setFont(new Font("Calibri (Cuerpo)", Font.BOLD ,18));
         
         lblAgregarUsuario = new JLabel("¿Quieres Agregarlo?");
@@ -87,7 +87,7 @@ public class FormUsuarioEncontrado extends JFrame implements ActionListener
         if (ae.getSource()==btnSiAgregarUsuario)
         {
           ClienteHiloEscritura findFriend = new ClienteHiloEscritura(OOS);
-          findFriend.agregarAmigo(User);
+          findFriend.agregarAmigo(User,Amigo);
           this.setVisible(false);
           
         }

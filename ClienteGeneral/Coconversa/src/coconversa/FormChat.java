@@ -41,7 +41,7 @@ public class FormChat extends JFrame implements ActionListener
     public List<chat> ChatsGruposAbiertos;
     //---------PANEL CONVERSACIÓN----------------------------------------------
     private JTextField txtMensajesChat;
-    private JButton btnEnviarChat,btnSalirChat;
+    private JButton btnEnviarChat,btnSalirChat,btnActualizarChat;
     private JTabbedPane tabMensajesChat;
     private JPanel panelConversacionChat,panelScrConversacionChat;
     private JList listaConversacionChat;
@@ -110,11 +110,14 @@ public class FormChat extends JFrame implements ActionListener
         lblUsuarioChat=new JLabel(Usuario);
         btnSalirChat = new JButton("Salir");
         btnSalirChat.addActionListener(this);
+        btnActualizarChat = new JButton("Actualizar");
+        btnActualizarChat.addActionListener(this);
         
         pnlUsuarioBoton = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 3));
         pnlUsuarioBoton.setBorder(new LineBorder(Color.BLACK));
         pnlUsuarioBoton.add(lblUsuarioChat);
         pnlUsuarioBoton.add(btnSalirChat);
+        pnlUsuarioBoton.add(btnActualizarChat);
        
         tabMensajesChat=new JTabbedPane();
         panelConversacionChat=new JPanel();
@@ -482,12 +485,21 @@ public class FormChat extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent ae) {
          if(ae.getSource()== btnSalirChat ){
-            /*this.setVisible(false);
-            System.exit(0);*/
-            
+            ClienteHiloEscritura cerrar = new ClienteHiloEscritura(OOS);
+            cerrar.cerrarSesion(Usuario);
+            this.setVisible(false);
+            System.exit(0);
+            /*
             listModelGrupo.addElement("GrupoPrueba");
             listModelGrupo.addElement("hola");
-            listModel.addElement("Chemi");
+            listModel.addElement("Chemi");*/
+         }
+         if(ae.getSource()==btnActualizarChat){
+             ClienteHiloEscritura men = new ClienteHiloEscritura(OOS);
+             men.notificaciones(Usuario);
+             men.amigosConectados(Usuario);
+             men.amigosDesconectados(Usuario);
+             
          }
           if(ae.getSource()== btnBuscarAmigosChat){
               if(txtBuscarAmigosChat.getText().toString().equals("")){
@@ -499,6 +511,7 @@ public class FormChat extends JFrame implements ActionListener
                     CB.existeUsuario(AmigoB);
               }
          }
+          
          if(ae.getSource()==btnEliminarAmigoConectadoChat)
          {
             // System.out.println("Holaaaa");
@@ -607,7 +620,7 @@ public class FormChat extends JFrame implements ActionListener
              ChatsAbiertos.add(michat);
              tabMensajesChat.addTab(michat.nombre, michat.getPanel());  
               ClienteHiloEscritura pedirmensajes = new ClienteHiloEscritura(OOS);
-              pedirmensajes.getMensajes(Usuario,michat.nombre);
+              pedirmensajes.getMensajes(michat.nombre,Usuario);
            }else{
                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione un amigo para chatear");
                FEG.setVisible(true);
@@ -645,9 +658,9 @@ public  class chat{
                 }else{
                     ClienteHiloEscritura envio = new ClienteHiloEscritura(OOS);
                     if(Grupo){
-                        envio.enviarMensajeGrupo(nombre,Usuario,Mensaje);
+                        envio.enviarMensajeGrupo(Usuario,nombre,Mensaje);
                     }else{
-                        envio.enviarMensajeChat(nombre,Usuario,Mensaje);
+                        envio.enviarMensajeChat(Usuario,nombre,Mensaje);
                     } 
                     AreaChat.append("\n" +"[" +Time.from(Instant.now())+"] "+Usuario +" : "+ txtMensajes.getText());
                     txtMensajes.setText("");

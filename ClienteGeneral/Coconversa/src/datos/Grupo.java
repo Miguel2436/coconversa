@@ -5,11 +5,13 @@
  */
 package datos;
 
+import java.io.Serializable;
+
 /**
  * Esta clase es el modelo de la tabla Grupo de la BD.
  * @author Leonardo Martinez
  */
-public class Grupo {
+public class Grupo implements Serializable{
     private int idGrupo;
     private String nombre;
     /**

@@ -47,7 +47,7 @@ public class FormSolicitudAmigo extends JFrame implements ActionListener
         
         lblAmigoSolicitante = new JLabel(userD);
         lblAmigoSolicitante.setForeground(Color.red);
-        lblMensajeAmigoSolicitante = new JLabel(lblAmigoSolicitante.getText() + " quiere ser tu amig@ en Coconversa");
+        lblMensajeAmigoSolicitante = new JLabel(userR + " quiere ser tu amig@ en Coconversa");
         
         btnAceptarAmigo = new JButton("Aceptar");
         btnAceptarAmigo.addActionListener(this);

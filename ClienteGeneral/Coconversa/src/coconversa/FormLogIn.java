@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -108,7 +109,9 @@ public class FormLogIn extends JFrame implements ActionListener
                 //Comentar
                 
                 ClienteHiloEscritura log = new ClienteHiloEscritura(OOS);
-                log.logIn(txtNombre.getText(),txtContraseña.getText());
+                log.logIn(txtNombre.getText(),Arrays.toString(txtContraseña.getPassword()));
+                //System.out.println(""+Arrays.toString(txtContraseña.getPassword()));
+                this.setVisible(false);
                 //Comentar
                
             }

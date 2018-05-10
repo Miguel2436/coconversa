@@ -117,11 +117,13 @@ public class ClienteHiloEscritura{
      * Genera una solicitud de amistad al usuario que se le envie.
      * @param Username Nombre de usuario al que se desea agregar.
      */
-    public  void agregarAmigo(String Username)
+    public  void agregarAmigo(String Username,String amigo)
     {
         Mensaje agregar = new Mensaje();
         agregar.setOperacion("AGREGAR_AMIGO");
-        agregar.setNombre(Username);
+        agregar.setDestinatario(amigo);
+        agregar.setRemitente(Username);
+        
         try{ 
             
             OOS.writeObject(agregar);
@@ -184,7 +186,24 @@ public class ClienteHiloEscritura{
             OOS.writeObject(remove);
         }catch(IOException ex){}
     }
-    
+    public void notificaciones(String Usuario){
+        Mensaje noti = new Mensaje();
+        noti.setOperacion("NOTIFICACIONES");     
+        noti.setNombre(Usuario);
+        try
+        {
+            OOS.writeObject(noti);
+        }catch(IOException ex){}
+    }
+    public void cerrarSesion(String Usuario){
+        Mensaje noti = new Mensaje();
+        noti.setOperacion("Cerrar_Sesion");     
+        noti.setNombre(Usuario);
+        try
+        {
+            OOS.writeObject(noti);
+        }catch(IOException ex){}
+    }
     ///////////////////////
     //Funciones de Grupo//
     //////////////////////

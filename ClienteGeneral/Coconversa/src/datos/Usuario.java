@@ -5,12 +5,14 @@
  */
 package datos;
 
+import java.io.Serializable;
+
 /**
  * Esta clase contiene las propiedades correspondientes a un usuario y
  * los metodos necesarios para inicializarlas, coincide con la tabla de la BD.
  * @author Leoanrdo Martinez
  */
-public class Usuario {
+public class Usuario implements Serializable{
     private String nombre;
     private String password;
     /**

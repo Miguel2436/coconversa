@@ -5,12 +5,14 @@
  */
 package datos;
 
+import java.io.Serializable;
+
 /**
  * Esta clase es el modelo de la tabla conexion de la BD,
  * util para convertir la informacion a objetos utiles.
  * @author Leonardo Martinez
  */
-public class Conexion {
+public class Conexion implements Serializable{
     private int idConexion;
     private String ipAddress;
     private int estado;

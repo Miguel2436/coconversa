@@ -133,7 +133,7 @@ public class FormSignUp extends JFrame implements ActionListener
                         
                         this.setVisible(false);
                         ClienteHiloEscritura Escribir = new ClienteHiloEscritura(OOS);
-                        Escribir.signUp(txtNombre.getText(),Contraseña2);
+                        Escribir.signUp(txtNombre.getText(),Arrays.toString(txtConfContraseña.getPassword()));
                     }
                     else
                     {
