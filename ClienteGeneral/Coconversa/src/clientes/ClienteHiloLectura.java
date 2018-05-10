@@ -87,9 +87,50 @@ public class ClienteHiloLectura implements Runnable
                         FormSolicitudAmigo x = new FormSolicitudAmigo(Paquete.getNombre(),Chat.lblUsuarioChat.getText());
                         x.setVisible(true);
                     break;
+                    case"CREAR_GRUPO":
+                      if(Paquete.isEstado())
+                        {
+                            Chat.listModelGrupo.clear();
+                            List<Grupo> y ;
+                            y=Paquete.getListaGrupos();
+                            for(int i = 0; i<y.size(); i++)
+                            {
+                                Chat.listModelGrupo.addElement(y.get(i).getNombre());
+                            }
+                        }
+                    break;
                     case"ELIMINAR_GRUPO":
+                    if(Paquete.isEstado())
+                        {
+                            Chat.listModelGrupo.clear();
+                            FormExitosoGeneral exito= new FormExitosoGeneral("Grupo Eliminado");
+                            exito.setVisible(true);
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            CE.verGrupos(Chat.lblUsuarioChat.getText());
+                        }
+                    break;
+                    case"SALIR_GRUPO":
+                    if(Paquete.isEstado())
+                        {
+                            Chat.listModelGrupo.clear();
+                            FormExitosoGeneral exito = new FormExitosoGeneral("Saliste del grupo");
+                            exito.setVisible(true);
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            CE.verGrupos(Chat.lblUsuarioChat.getText());
+                        }
                     break;
                     case"MODIFICAR_GRUPO":
+                    if(Paquete.isEstado())
+                        {
+                            Chat.listModelGrupo.clear();
+                            FormExitosoGeneral exito = new FormExitosoGeneral("Grupo Modificado");
+                            exito.setVisible(true);
+                            ClienteHiloEscritura CE= new ClienteHiloEscritura();
+                            CE.verGrupos(Chat.lblUsuarioChat.getText());
+                        }
+                    break;
+                    case"SOLICITAR_AMIGOS":
+                        Chat.ListUsuario = Paquete.getListaUsuarios();
                     break;
                     case"MENSAJE_NUEVO":
                         boolean Creado = false;
