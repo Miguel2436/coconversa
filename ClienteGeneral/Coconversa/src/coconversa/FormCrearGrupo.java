@@ -1,10 +1,13 @@
 package coconversa;
 
+import clientes.ClienteHiloEscritura;
+import datos.Usuario;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import static javax.swing.BoxLayout.Y_AXIS;
@@ -20,14 +23,18 @@ import javax.swing.JTextField;
 
 public class FormCrearGrupo extends JFrame implements ActionListener
 {
+    
     private JLabel lblCrearGrupo;
     private JTextField txtNombreGrupo;
     private JPanel pnlListaAmigos;
     private JScrollPane scrListaAmigos;
     private JButton btnCrearGrupo;
     
-    public FormCrearGrupo()
+    private List <Usuario> usuariosGeneral; //Lista para traer a los usuarios
+
+    public FormCrearGrupo(List <Usuario> usuarios)
     {
+       this.usuariosGeneral = usuarios;
         configurar();
         componentes();
     }
@@ -58,11 +65,15 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         
         btnCrearGrupo = new JButton("Crear Grupo");
         btnCrearGrupo.addActionListener(this);
+        //public piña
+       
         
+        //
         pnlListaAmigos.add(Box.createVerticalStrut(10));
-        for(int i=1; i<=10; i++)
+        for(int i=0; i<usuariosGeneral.size(); i++)
         {
-            JCheckBox amigo = new JCheckBox("Amigo " + i);
+            
+            JCheckBox amigo = new JCheckBox(usuariosGeneral.get(i).getNombre());
             amigo.setAlignmentX(Component.CENTER_ALIGNMENT);
             pnlListaAmigos.add(amigo);
             pnlListaAmigos.add(Box.createVerticalStrut(10));
@@ -96,6 +107,8 @@ public class FormCrearGrupo extends JFrame implements ActionListener
     {
         if(e.getSource()==btnCrearGrupo)   
         { 
+         ClienteHiloEscritura crearGrupo = new ClienteHiloEscritura();  
+         crearGrupo.crearGrupo(txtNombreGrupo.getText(), usuariosGeneral);
         }
     }
 }
