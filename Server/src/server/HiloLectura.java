@@ -26,20 +26,22 @@ import java.util.List;
  */
 public class HiloLectura extends Thread{
 
-    private ServerSocket socket;
+    private Socket socket;
     private Escritura escritura;
     private ObjectOutputStream oos;
     private HashMap<String, ObjectOutputStream> conexiones;
-    public HiloLectura(ServerSocket socket, HashMap<String, ObjectOutputStream> conexiones, ObjectOutputStream oos) {
+    public HiloLectura(Socket socket, HashMap<String, ObjectOutputStream> conexiones, ObjectOutputStream oos) {
+        System.out.println("Creando Hilo lectura");
         this.socket = socket;
         escritura = new Escritura();
         this.conexiones = conexiones;
         this.oos = oos;
+        System.out.println("yasta creado");
     }
     @Override
     public void run() {
         try {
-            Socket lectura = socket.accept();
+            Socket lectura = socket;
             System.out.println("Conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort() + " hecha desde el puerto: " + lectura.getLocalPort());
             leerSocket(lectura);                                          
         } catch (IOException ex) {
@@ -47,11 +49,11 @@ public class HiloLectura extends Thread{
         }
     }
     public void leerSocket(Socket lectura) throws IOException {
+        ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
         synchronized (oos) {
             Mensaje mensaje;
             while (!lectura.isClosed()) {
-                try {
-                    ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
+                try {     
                     mensaje = (Mensaje) ois.readObject();
                     Usuario usuario;
                     Conexion conexion;
@@ -59,8 +61,13 @@ public class HiloLectura extends Thread{
                     Usuario destinatario;
                     Usuario remitente;
                     Grupo grupo;
+                    System.out.println("Operacion leida: " + mensaje.getOperacion());
                     switch (mensaje.getOperacion()) {
                         case "LOGIN":
+                            if (mensaje.getNombre() == null || mensaje.getMensaje() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             mensaje.setOperacion("LOGIN");
@@ -72,6 +79,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "SIGNUP":
+                            if (mensaje.getNombre() == null || mensaje.getMensaje() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             try {
@@ -82,6 +93,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "EXISTE_USUARIO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 if (escritura.ExisteUsuario(usuario)) {                                    
@@ -113,6 +128,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "CREAR_GRUPO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.crearGrupo(grupo, mensaje.getListaUsuarios());
@@ -122,6 +141,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "ELIMINAR_GRUPO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.eliminarGrupo(grupo);
@@ -131,6 +154,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "MODIFICAR_GRUPO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.modificarGrupo(mensaje.getListaUsuarios(), grupo);
@@ -152,6 +179,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "SOLICITAR_AMIGOS":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 mensaje.setListaUsuarios(escritura.SolicitarAmigos(usuario));
@@ -161,6 +192,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "SOLICITAR_AMIGOS_CONECTADOS":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 mensaje.setListaUsuarios(escritura.SolicitarAmigosConectados(usuario));                                
@@ -170,6 +205,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "SOLICITAR_AMIGOS_DESCONECTADOS":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 mensaje.setListaUsuarios(escritura.SolicitarAmigosDesconectados(usuario));                                
@@ -179,6 +218,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "SOLICITAR_GRUPOS":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 mensaje.setListaGrupos(escritura.SolicitarGrupos(usuario));
@@ -198,6 +241,10 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "CERRAR_SESION":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             usuario = new Usuario(mensaje.getNombre(), "");
                             try {
                                 escritura.cerrarSesion(usuario);    //===============================> Crear funcion en esctritura que pase conexion.estado a falso
@@ -229,6 +276,10 @@ public class HiloLectura extends Thread{
                             oos.writeObject(mensaje);
                             break;
                         case "MENSAJE_A_GRUPO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             grupo = new Grupo(0, mensaje.getNombre());
                             List<Usuario> integrantes;
                             mensaje.setEstado(true);
@@ -247,18 +298,28 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "GET_MENSAJES":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             destinatario = new Usuario(mensaje.getNombre(), "");
                             remitente = new Usuario(mensaje.getRemitente(), "");
                             mensaje.setListaMensajes(Log.getInstancia().getMensajes(destinatario, remitente));
                             break;
                         case "GET_MENSAJES_GRUPO":
+                            if (mensaje.getNombre() == null){
+                                mensaje.setEstado(false);
+                                break;
+                            }
                             grupo = new Grupo(0, mensaje.getNombre());
                             mensaje.setListaMensajes(Log.getInstancia().getMensajesGrupo(grupo));
                             break;
                         default:
+                            mensaje.setOperacion("OPERACION_DESCONOCIDA");
                             break;
                     }
                     oos.writeObject(mensaje);
+                    oos.flush();
                 } catch (IOException ex) {
                     System.out.println("Error leyendo: " + ex.getMessage());
                     System.out.println("Termina conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort());

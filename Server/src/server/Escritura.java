@@ -9,16 +9,10 @@
 package server;
 
 import datos.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -35,9 +29,9 @@ public class Escritura {
             Class.forName("com.mysql.jdbc.Driver");
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/coconversabd","root","");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Escritura.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error encontrando clase: " + ex.toString());
         } catch (SQLException ex) {
-            Logger.getLogger(Escritura.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error ingresando a BD: " + ex.toString());
         }
          
     }
@@ -61,7 +55,6 @@ public class Escritura {
         rs.first();
         if (rs.getInt("Existe")==0)
         {
-            System.out.println("Entre");
             sql = conexion.prepareStatement("INSERT INTO usuario VALUES (?,?)");
             sql.setString(1, u.getNombre());
             sql.setString(2, u.getPassword());

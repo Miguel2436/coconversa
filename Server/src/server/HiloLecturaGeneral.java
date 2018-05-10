@@ -5,7 +5,6 @@
  */
 package server;
 
-import com.sun.corba.se.impl.io.IIOPOutputStream;
 import datos.Mensaje;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -61,30 +60,26 @@ public class HiloLecturaGeneral extends Thread{
     }
     
     public void leerSocket(String direccionCliente, Socket lectura) throws IOException, ClassNotFoundException{
+        System.out.println("Leyendo...");
+        ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
         ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
         Mensaje mensaje;
         mensaje = (Mensaje) ois.readObject();    
-        
-        if (mensaje.getOperacion().equals("SOLICITAR_CONEXION")){
+        System.out.println("Operacion leida: " + mensaje.getOperacion());
+        if (mensaje.getOperacion().equals("SOLICITAR_CONEXION")){            
             ServerSocket puerto = new ServerSocket(0);
-            ObjectOutputStream oosTemp = new ObjectOutputStream(puerto.accept().getOutputStream());
-            synchronized (conexiones) {
-                conexiones.put(direccionCliente, oosTemp);
-            }
-            
-            ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());
-            mensaje = new Mensaje();
-            mensaje.setOperacion("SOLICITAR_CONEXION");
+            Socket socket;
             mensaje.setEstado(true);
             Integer puertoLocal = puerto.getLocalPort();            
             mensaje.setMensaje(puertoLocal.toString());
             oos.writeObject(mensaje);
-            
-            Thread nuevoHiloLectura = new HiloLectura(puerto, conexiones, oosTemp);
+            socket = puerto.accept();
+            ObjectOutputStream oosTemp = new ObjectOutputStream(socket.getOutputStream());
+            synchronized (conexiones) {
+                conexiones.put(direccionCliente, oosTemp);
+            }
+            Thread nuevoHiloLectura = new HiloLectura(socket, conexiones, oosTemp);
             nuevoHiloLectura.start();
-            
-            //Thread nuevoHiloEscritura = new HiloEscritura(puerto);
-            //nuevoHiloEscritura.start();
         }
     }
 }
