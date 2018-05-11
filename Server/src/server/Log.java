@@ -7,6 +7,7 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 import datos.Grupo;
 import datos.LogConversacion;
 import datos.LogGrupo;
@@ -15,27 +16,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.*;
 /**
  *
  * @author Usuario
  */
 public class Log {
-    private static Log log;
-    private static Gson gson;
-    
+    private static Log log;    
     
     public Log() {
-        gson = new Gson();
     }
     public static synchronized Log getInstancia() {
         if (log == null) log = new Log();
         return log;
     }
     public synchronized void crearLogConversacion(Usuario destinatario, Usuario remitente, String mensaje) throws FileNotFoundException, IOException {
+        System.out.println("Creando log de " + destinatario.getNombre());
         File logUsuario = new File(destinatario.getNombre() + ".txt");  //Se crea el archivo con el nombre del usuario
         FileOutputStream fos = new FileOutputStream(logUsuario);      
         List<LogConversacion> logConversaciones = new ArrayList<>();
@@ -44,14 +49,15 @@ public class Log {
         logConversacion.addMensaje(mensaje);
         
         logConversaciones.add(logConversacion);
-        
-        String cadenaJson = gson.toJson(logConversaciones, List.class);
+        JSONArray jO = new JSONArray(logConversaciones);
+        String cadenaJson = jO.toString();
         fos.write(cadenaJson.getBytes("utf-8"));
+        System.out.println("Archivo creado en: " + logUsuario.getPath());
     }
     public synchronized  List<LogConversacion> getLogConversacion(Usuario usuario) {
         File archivo = new File(usuario.getNombre() + ".txt");  //Se crea el archivo con el nombre del usuario
         if (!archivo.exists()) return null;                     //si ya existe se retorna null
-        List<LogConversacion> LogConversaciones;
+        List<LogConversacion> LogConversaciones = new ArrayList<>();
         String cadenaJson = "";
         try {
             FileInputStream fis = new FileInputStream(archivo);             
@@ -59,33 +65,37 @@ public class Log {
             if (fis.read(stringBytes) >= 0) {                   //Se lee el archivo, si se lee algo, se convierte a cadena json
                 cadenaJson = new String(stringBytes, "utf-8");
             }
-            else return null;                                   //Si no, se retorna null
-            LogConversaciones = gson.fromJson(cadenaJson, List.class);  //Se convierte a lista la cadena json del archivo,
+            else return null;   
+            //Si no, se retorna null
+            JSONArray jA = new JSONArray(cadenaJson);
+            for (int i = 0; i < jA.length(); i++) {
+                LogConversaciones.add((LogConversacion)jA.get(i));  //Se convierte a lista la cadena json del archivo,
+            }                
               
         } catch (FileNotFoundException ex) {
+            System.out.println("Error encontrando archivo: " + ex.toString());
             return null;                                        //En  caso de cualquier error
-        } catch (IOException ex) {                              //Se retorna nulo
-            return null;
-        } catch (JsonSyntaxException ex) {
-            return null;
+        } catch (IOException ex) { 
+            System.out.println("Error leyendo archivo: " + ex.toString());
         }
         return LogConversaciones;
     }
     public synchronized void crearLogGrupo(Grupo grupo, List<Usuario> integrantes) throws FileNotFoundException, IOException {
+        System.out.println("Creando archivo de grupo " + grupo.getNombre());
         File archivo = new File(grupo.getNombre() + ".txt");    //Se crea el archivo con el nombre del usuario
         if (archivo.createNewFile()) {                          //Si el archivo no existe se procede
             FileOutputStream fos = new FileOutputStream(archivo);   
             LogGrupo logGrupo = new LogGrupo(grupo, integrantes);   //Se crea  el objeto log con la informacion principal
-
-            String cadenaJson = gson.toJson(logGrupo, LogGrupo.class);  //Se guarda el objeto en json
+            JSONObject jO = new JSONObject(logGrupo);
+            String cadenaJson = jO.toString();  //Se guarda el objeto en json
             fos.write(cadenaJson.getBytes("utf-8"));                    //Se le escribe al archivo vacion
         } else throw new IOException("");                       //Si el archivo ya existe se lanza excepcion para hacerselo saber al invocador
-        
+        System.out.println("Archivo creado en: " + archivo.getPath());
     }
     public synchronized LogGrupo getLogGrupo(Grupo grupo) {
         File archivo = new File(grupo.getNombre() + ".txt");    //Se crea el archivo con el nombre de grupo
-        if (!archivo.exists()) return null;                     //Si existe se retorna un null
-        LogGrupo logGrupo;
+        if (!archivo.exists()) return null;                     //Si no existe se retorna un null
+        LogGrupo logGrupo = new LogGrupo();
         String cadenaJson = "";
         try {
             FileInputStream fis = new FileInputStream(archivo);             
@@ -93,8 +103,11 @@ public class Log {
             if (fis.read(stringBytes) >= 0) {                   //Si se lee algo del archivo se convierte a json
                 cadenaJson = new String(stringBytes, "utf-8");
             }
-            logGrupo = gson.fromJson(cadenaJson, LogGrupo.class);  //Se convierte al objeto log de grupo la cadena json del archivo,
-              
+            JSONObject jO = new JSONObject(cadenaJson);
+            logGrupo.setGrupo((Grupo)jO.get("grupo"));  //Se convierte al objeto log de grupo la cadena json del archivo,
+            logGrupo.setMensajes((List<String>)jO.get("mensajes"));
+            logGrupo.setUsuarios((List<Usuario>)jO.get("usuarios"));
+            
         } catch (FileNotFoundException ex) {
             return null;
         } catch (IOException ex) {                              //Cualquier error retorna null
@@ -127,7 +140,8 @@ public class Log {
             archivo.delete();                                                                   //Se borra el archivo existente
             archivo = new File(destinatario.getNombre() + ".txt");
             FileOutputStream fos = new FileOutputStream(archivo);
-            String cadenaJson = gson.toJson(logConversaciones, List.class);                     //y se sobreescribe por el mismo contenido
+            JSONArray jA = new JSONArray(logConversaciones.toArray());
+            String cadenaJson = jA.toString();                     //y se sobreescribe por el mismo contenido
             fos.write(cadenaJson.getBytes("utf-8"));                                            //con los cambios ya hechos
         }
     }
@@ -154,7 +168,8 @@ public class Log {
         archivo.delete();
         archivo = new File(destinatario.getNombre() + ".txt");
         FileOutputStream fos = new FileOutputStream(archivo);
-        String cadenaJson = gson.toJson(logGrupo, LogGrupo.class);
+        JSONObject jO = new JSONObject(logGrupo);
+        String cadenaJson = jO.toString();
         fos.write(cadenaJson.getBytes("utf-8"));    
     }
     public synchronized List<String> getMensajesGrupo(Grupo grupo){
@@ -171,7 +186,8 @@ public class Log {
         archivo.delete();
         archivo = new File(grupo.getNombre() + ".txt");
         FileOutputStream fos = new FileOutputStream(archivo);
-        String cadenaJson = gson.toJson(logGrupo, LogGrupo.class);
+        JSONObject jO = new JSONObject(logGrupo);
+        String cadenaJson = jO.toString();
         fos.write(cadenaJson.getBytes("utf-8"));    
     }
    

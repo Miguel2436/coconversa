@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,9 +54,10 @@ public class HiloLectura extends Thread{
     }
     public void leerSocket(Socket lectura) throws IOException {
         ObjectInputStream ois = new ObjectInputStream(lectura.getInputStream());
+        boolean condicion = true;
         synchronized (oos) {
             Mensaje mensaje;
-            while (!lectura.isClosed()) {
+            while (condicion) {
                 try {     
                     mensaje = (Mensaje) ois.readObject();
                     Usuario usuario;
@@ -70,7 +73,8 @@ public class HiloLectura extends Thread{
                                 mensaje.setEstado(false);
                                 break;
                             }
-                            usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje());  
+                            System.out.println(mensaje.getNombre() + "||" + mensaje.getMensaje());
+                            usuario = new Usuario(mensaje.getNombre(), mensaje.getMensaje()); 
                             user = usuario;
                             conexion = new Conexion(0, lectura.getInetAddress().toString(), 1, usuario.getNombre());
                             try {                                
@@ -100,11 +104,8 @@ public class HiloLectura extends Thread{
                                 break;
                             }
                             usuario = new Usuario(mensaje.getNombre(), "");
-                            try {
-                                if (escritura.ExisteUsuario(usuario)) {                                    
-                                    mensaje.setEstado(true);
-                                }
-                                else mensaje.setEstado(false);                                
+                            try {                             
+                                mensaje.setEstado(escritura.ExisteUsuario(usuario));                               
                             } catch (SQLException ex) {
                                 mensaje.setEstado(false);
                             }
@@ -122,10 +123,12 @@ public class HiloLectura extends Thread{
                         case "ELIMINAR_AMIGO":
                             usuario = new Usuario(mensaje.getRemitente(), "");
                             usuario2 = new Usuario(mensaje.getDestinatario(), "");
+                            System.out.println("Solicitante = " + usuario.getNombre() + " Solicitado = " + usuario2.getNombre());
                             try {
                                 escritura.EliminarAmigo(usuario, usuario2);
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
+                                System.out.println(ex.toString());
                                 mensaje.setEstado(false);
                             }
                             break;
@@ -193,7 +196,7 @@ public class HiloLectura extends Thread{
                                 mensaje.setEstado(false);
                             }
                             break;
-                        case "SOLICITAR_AMIGOS_CONECTADOS":
+                        case "AMIGOS_CONECTADOS":
                             if (mensaje.getNombre() == null){
                                 mensaje.setEstado(false);
                                 break;
@@ -206,7 +209,7 @@ public class HiloLectura extends Thread{
                                 mensaje.setEstado(false);
                             }
                             break;
-                        case "SOLICITAR_AMIGOS_DESCONECTADOS":
+                        case "AMIGOS_DESCONECTADOS":
                             if (mensaje.getNombre() == null){
                                 mensaje.setEstado(false);
                                 break;
@@ -256,22 +259,34 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "MENSAJE":
-                            ObjectOutputStream oosDestinatario = conexiones.get(mensaje.getDestinatario());
+                            destinatario = new Usuario(mensaje.getDestinatario(), "");
+                            String ip = "";
+                            try {
+                                ip = escritura.getIp(destinatario);
+                            } catch (SQLException ex) {
+                                System.out.println("Error obteniendo ip");
+                            }
+                            final ObjectOutputStream oosDestinatario = conexiones.get(ip);
                             if (oosDestinatario == null) {
                                 mensaje.setEstado(false);
                             }
                             else{
+                                System.out.println("Mensaje de " + mensaje.getRemitente() + " para " + mensaje.getDestinatario() + " : " + mensaje.getMensaje());
                                 mensaje.setOperacion("MENSAJE_NUEVO");
                                 synchronized (oosDestinatario) {
+                                    System.out.println("Escribiendo a destinatario");
                                     oosDestinatario.writeObject(mensaje);
+                                    System.out.println("Mensaje enviado");
                                 }
                                 //funcion de guardar mensaje en archivo
                                 mensaje.setOperacion("MENSAJE");
                                 mensaje.setEstado(true);
-                                oos.writeObject(mensaje);
+                                mensaje.setMensaje("[" + Time.from(Instant.now()).toString() + "]" + mensaje.getMensaje());
                                 destinatario = new Usuario(mensaje.getDestinatario(), "");
                                 remitente = new Usuario(mensaje.getRemitente(), "");
-                                Log.getInstancia().addMensaje(destinatario, remitente, mensaje.getMensaje());
+                                //Log.getInstancia().addMensaje(destinatario, remitente, mensaje.getMensaje());
+                                System.out.println("Guardado en log");
+                                
                             }
                             break;
                         case "MENSAJE_NUEVO":
@@ -300,11 +315,11 @@ public class HiloLectura extends Thread{
                             }
                             break;
                         case "GET_MENSAJES":
-                            if (mensaje.getNombre() == null){
+                            if (mensaje.getDestinatario()== null){
                                 mensaje.setEstado(false);
                                 break;
                             }
-                            destinatario = new Usuario(mensaje.getNombre(), "");
+                            destinatario = new Usuario(mensaje.getDestinatario(), "");
                             remitente = new Usuario(mensaje.getRemitente(), "");
                             mensaje.setListaMensajes(Log.getInstancia().getMensajes(destinatario, remitente));
                             break;
@@ -316,19 +331,41 @@ public class HiloLectura extends Thread{
                             grupo = new Grupo(0, mensaje.getNombre());
                             mensaje.setListaMensajes(Log.getInstancia().getMensajesGrupo(grupo));
                             break;
+                        case "NOTIFICACIONES":
+                            usuario = new Usuario(mensaje.getNombre(),"");
+                                try {
+                                    mensaje.setListaUsuarios(escritura.notificacionesAmistad(usuario));                                    
+                                    if(mensaje.getListaUsuarios() == null) mensaje.setEstado(false);
+                                    else mensaje.setEstado(true);
+                                } catch (SQLException ex) {
+                                    System.out.println(ex.toString());
+                                    mensaje.setEstado(false);
+                                }    
+                            break;
                         default:
                             mensaje.setOperacion("OPERACION_DESCONOCIDA");
                             break;
                     }
-                    oos.writeObject(mensaje);
-                    oos.flush();
+                    try {
+                        oos.writeObject(mensaje);
+                        oos.flush();
+                    } catch (IOException ex){
+                        System.out.println("Error escribiendo el objeto: " + ex.toString());
+                    }
                 } catch (IOException ex) {
                     System.out.println("Error leyendo: " + ex.getMessage());
                     System.out.println("Termina conexion especifica con: " + lectura.getInetAddress() + ":" + lectura.getPort());
-                    lectura.close();                
-                } catch (ClassNotFoundException ex) {
-                    System.out.println("Error al encontrar la clase:" + ex.getMessage());
+                    try {
+                        escritura.cerrarSesion(user);
+                    } catch (SQLException e) {
+                        System.out.println("Error cerrando sesion: " + ex.toString());
+                    }
+                    lectura.close();  
+                    condicion = false;
+                } catch (ClassNotFoundException e) {
+                    System.out.println("Error al encontrar la clase:" + e.getMessage());
                 }
+                System.out.println("Leyendo....");
             }
         }
     }

@@ -134,11 +134,11 @@ public class Escritura {
      * @param solicitante objeto tipo usuario (remitente)
      * @throws SQLException 
      */
-    public void AceptarAmigo (Usuario solicitado, Usuario solicitante) throws SQLException
+    public void AceptarAmigo (Usuario solicitante, Usuario solicitado) throws SQLException
     {
-        sql= conexion.prepareStatement("UPDATE amistad SET Estado = true WHERE"
-                + "amistad.Solicitante = '" + solicitante.getNombre() +
-                "' AND amistad.Solicitado = '" + solicitado.getNombre() + "'");  
+        sql= conexion.prepareStatement("UPDATE amistad SET Estado = true WHERE amistad.Solicitante = ? AND amistad.Solicitado = ?");
+        sql.setString(1, solicitante.getNombre());
+        sql.setString(2, solicitado.getNombre());
         sql.executeUpdate();
     }
     
@@ -353,18 +353,11 @@ public class Escritura {
     * @throws SQLException 
     */
    public boolean ExisteUsuario(Usuario u) throws SQLException {
-            sql= conexion.prepareStatement("SELECT usuario.Nombre FROM Usuario");
+            sql= conexion.prepareStatement("SELECT usuario.Nombre FROM Usuario Where Nombre = ?");
+            sql.setString(1, u.getNombre());
             rs = sql.executeQuery();
-            rs.first();
-            
-            while(rs.next()){
-                if(rs.getObject("Nombre") == u.getNombre()){
-                    return true;
-                }else{
-                    return false;
-                }
-            }       
-        return false;
+            if (rs.first()) return true;
+            else return false;
     }
    
     /**
@@ -377,16 +370,16 @@ public class Escritura {
      */
     public void AgregarAmigo(Usuario solicitado, Usuario solicitante) throws SQLException {
         sql = conexion.prepareStatement("SELECT COUNT(amistad.IdAmistad) AS 'Verifica' "
-                + "FROM amistad WHERE amistad.Solicitante = '" + solicitado.getNombre() + "' AND amistad.Solicitado"
-                + "= '" + solicitante.getNombre() +  "'");
+                + "FROM amistad WHERE amistad.Solicitante = '" + solicitante.getNombre() + "' AND amistad.Solicitado"
+                + "= '" + solicitado.getNombre() +  "'");
         rs = sql.executeQuery();
         rs.first();
             
         if(rs.getInt("Verifica") == 0){
             PreparedStatement sqlInsert = conexion.prepareStatement("INSERT INTO amistad(IdAmistad, Solicitante, "
                 + "Solicitado, Estado) values(null, ?, ?, ?)");
-            sqlInsert.setString(1, solicitado.getNombre());
-            sqlInsert.setString(2, solicitante.getNombre());
+            sqlInsert.setString(1, solicitante.getNombre());
+            sqlInsert.setString(2, solicitado.getNombre());
             sqlInsert.setInt(3, 0);
             sqlInsert.executeUpdate();
             }else{
@@ -414,11 +407,15 @@ public class Escritura {
      * @param u2 objeto de tipo usuario (destinatario)
      * @throws SQLException 
      */
-    public void EliminarAmigo(Usuario u1, Usuario u2) throws SQLException {
-        sql = conexion.prepareStatement("DELETE FROM amistad"
-            + "WHERE amistad.Solicitante = '" + u1.getNombre() + "' AND amistad.Solicitado"
-            + "= '" + u2.getNombre() +  "'");
-        sql.executeUpdate();           
+    public void EliminarAmigo(Usuario solicitante, Usuario solicitado) throws SQLException {
+        sql = conexion.prepareStatement("DELETE FROM amistad WHERE amistad.Solicitante = ? AND amistad.Solicitado = ?");
+        sql.setString(1, solicitante.getNombre());
+        sql.setString(2, solicitado.getNombre());
+        sql.executeUpdate(); 
+        sql = conexion.prepareStatement("DELETE FROM amistad WHERE amistad.Solicitante = ? AND amistad.Solicitado = ?");
+        sql.setString(1, solicitado.getNombre());
+        sql.setString(2, solicitante.getNombre());
+        sql.executeUpdate();       
     }
     
     /**
@@ -448,13 +445,22 @@ public class Escritura {
                 + "amistad.Solicitado = '" + u.getNombre() + "';");
         ResultSet rs;
         rs = sql.executeQuery();
-        rs.first();
+        if (rs.first()){
          do 
             {
                 Usuario x = new Usuario (rs.getString("Solicitante"), "");
                 lista.add(x);
             } while (rs.next()); 
         return lista;
+        } return null;
+    }
+    public String getIp(Usuario usuario) throws SQLException {
+        sql = conexion.prepareStatement("Select ipaddress from conexion where usuario = ?");
+        sql.setString(1, usuario.getNombre());
+        rs = sql.executeQuery();
+        if (rs.first()){
+            return rs.getString("IPaddress");
+        }else return null;
     }
     
 }
