@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -179,7 +180,10 @@ public class ClienteHiloLectura implements Runnable
                 exito.setVisible(true);
                 ClienteHiloEscritura CE= new ClienteHiloEscritura(OOS);
                 CE.verGrupos(Chat.lblUsuarioChat.getText());
-            }
+            } else {
+            FormErrorGeneral feg = new FormErrorGeneral("Error al modificar grupo");
+            feg.setVisible(true);                    
+        }
         break;
         case"SOLICITAR_AMIGOS":
             Chat.ListUsuario = Paquete.getListaUsuarios();
@@ -322,6 +326,15 @@ public class ClienteHiloLectura implements Runnable
                 }
             }
         break;
+        case "SOLICITAR_DETALLES_GRUPO":
+            if (Paquete.isEstado()) {
+                Chat.ListUsuario = Paquete.getListaUsuarios();
+                
+            } else {
+                FormErrorGeneral feg = new FormErrorGeneral("Error al obtener integrantes de grupo");
+                feg.setVisible(true);
+            }
+            break;
         case"":
             FormErrorGeneral errorx = new FormErrorGeneral("Dato extraño del Servidor");
             errorx.setVisible(true);

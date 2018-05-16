@@ -564,7 +564,7 @@ public class FormChat extends JFrame implements ActionListener
        {           
             ClienteHiloEscritura x = new ClienteHiloEscritura(OOS);
             x.solicitarAmigos(lblUsuarioChat.getText());        
-            while(ListUsuario == null){}; //Espera hasta que ListUsuario no sea null     
+            while(ListUsuario == null){x.solicitarAmigos(lblUsuarioChat.getText());}; //Espera hasta que ListUsuario no sea null     
             if (ListUsuario.isEmpty()) {
                 FormErrorGeneral feg = new FormErrorGeneral("Que sad :( No tienes amigos");
             }
@@ -578,7 +578,11 @@ public class FormChat extends JFrame implements ActionListener
            if(listaGruposChat.getSelectedValue()!=null)
            {
              ClienteHiloEscritura mGrupo = new ClienteHiloEscritura(OOS);
+             mGrupo.verUsuariosGrupo(listaGruposChat.getSelectedValue().toString(), Usuario);
+             while (ListUsuario == null){mGrupo.verUsuariosGrupo(listaGruposChat.getSelectedValue().toString(), Usuario);}
+               System.out.println("Llegue");
              FormModificarGrupo fmg = new FormModificarGrupo(OOS, Usuario, listaGruposChat.getSelectedValue().toString(), ListUsuario);
+             fmg.setVisible(true);
            }
            else
             {

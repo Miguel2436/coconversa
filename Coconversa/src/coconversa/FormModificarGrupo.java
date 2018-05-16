@@ -91,7 +91,7 @@ public class FormModificarGrupo extends JFrame implements ActionListener
         btnModificarGrupo.addActionListener(this);
         
         pnlListaAmigos.add(Box.createVerticalStrut(10));
-        for(int i=0; i<=usuariosGeneral.size(); i++)
+        for(int i=0; i < usuariosGeneral.size(); i++)
         {
             JCheckBox checkBox = new JCheckBox(usuariosGeneral.get(i).getNombre());
             checkBox.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -138,7 +138,6 @@ public class FormModificarGrupo extends JFrame implements ActionListener
                 JCheckBox amigo = listaChecks.get(i);
                 if(amigo.isSelected()) listaIntegrantesNueva.add( new Usuario(amigo.getText(), ""));
             }
-            listaIntegrantesNueva.add(new Usuario(userName, ""));
             ClienteHiloEscritura mGrupo = new ClienteHiloEscritura(OOS);
             FormErrorGeneral feg;
             if (listaIntegrantesNueva.size() < 3) {
