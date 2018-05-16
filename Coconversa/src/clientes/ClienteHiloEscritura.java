@@ -183,6 +183,10 @@ public class ClienteHiloEscritura{
             OOS.writeObject(remove);
         }catch(IOException ex){}
     }
+    /**
+     * Funcion que envia la solicitud para buscar actualizaciones, en solicitudes de amistad
+     * @param Usuario Es el usario que desea obtener las actualizaciones
+     */
     public void notificaciones(String Usuario){
         Mensaje noti = new Mensaje();
         noti.setOperacion("NOTIFICACIONES");     
@@ -192,6 +196,10 @@ public class ClienteHiloEscritura{
             OOS.writeObject(noti);
         }catch(IOException ex){}
     }
+    /**
+     * Sirve para cambiar el estado del cliente a desconectado
+     * @param Usuario Es el usuario que cerro sesion
+     */
     public void cerrarSesion(String Usuario){
         Mensaje noti = new Mensaje();
         noti.setOperacion("CERRAR_SESION");     
@@ -260,20 +268,6 @@ public class ClienteHiloEscritura{
         
     }
    
-    public  void salirGrupo(String Grupo)
-    {
-        Mensaje existe = new Mensaje();
-        existe.setOperacion("SALIR_GRUPO");
-        existe.setNombre(Grupo);
-        try{
-           //Ok entonces falta el metodo exacto,pues creemoslo <3
-            OOS.writeObject(existe);
-           
-        }catch (IOException ex) {
-        }
-    
-    }
-   
     /**
      * Pide al servidor que retorne la lista de usuarios de un grupo específico
      * @param GroupName Nombre de grupo a pedir integrantes de grupo
@@ -304,7 +298,12 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
-    ///////////
+    /**
+     * Envia el mensaje que esta destinado a un chat
+     * @param Remitente Nombre del usuario que envia el mensaje
+     * @param Destinatario Nombre del usuario al que se le manda el mensaje
+     * @param Mensaje Texto del mensaje
+     */
     public void enviarMensajeChat(String Remitente, String Destinatario, String Mensaje){
         Mensaje mensajechat = new Mensaje();
         mensajechat.setOperacion("MENSAJE");
@@ -316,6 +315,12 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
+    /**
+     * Envia el mensaje que va a un grupo
+     * @param Remitente Nombre del usuario que manda el mensaje
+     * @param Grupo Nombre del grupo al que se envia el mensaje
+     * @param Mensaje Texto del mensaje
+     */
     public void enviarMensajeGrupo(String Remitente, String Grupo, String Mensaje){
         Mensaje mensajechat = new Mensaje();
         mensajechat.setOperacion("MENSAJE_A_GRUPO");
@@ -328,6 +333,11 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
+    /**
+     * Solicita los mensajes de un usuario con otro
+     * @param Remitente Nombre de usuario que esta solicitando los mensajes
+     * @param Destinatario Usuario del que se esta solicitando la conversacion
+     */
     public void getMensajes(String Remitente, String Destinatario){
         Mensaje mensajechat = new Mensaje();
         mensajechat.setOperacion("GET_MENSAJES");
@@ -338,6 +348,10 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
+    /**
+     * Se solicitan los mensajes de un grupo
+     * @param Grupo Nombre del grupo del que se solicitan los mensajes
+     */
     public void getMensajesGrupo(String Grupo){
         Mensaje mensajechat = new Mensaje();
         mensajechat.setOperacion("GET_MENSAJES_GRUPO");
@@ -347,6 +361,10 @@ public class ClienteHiloEscritura{
         }catch(IOException ex){
         }
     }
+    /**
+     * Solicita la lista de usuarios conectados amigos de otro usuario
+     * @param Usuario Nombre del usuario que solicita la lista de amigos conectados
+     */
      public void amigosConectados(String Usuario)
     {
         Mensaje list= new Mensaje();
@@ -357,6 +375,10 @@ public class ClienteHiloEscritura{
             OOS.writeObject(list);
         }catch(IOException ex){}
     }
+     /**
+      * Solicita la lista de los usuarios no conectados amigos de otro usuario
+      * @param Usuario nombre del usuario que solicita la lista
+      */
     public void amigosDesconectados(String Usuario)
     {
         Mensaje list= new Mensaje();
@@ -371,6 +393,10 @@ public class ClienteHiloEscritura{
     //////////////////////
     //Funciones Busqueda//
     /////////////////////
+    /**
+     * Solicita la busqueda de si existe un usuario
+     * @param Username nombre del usuario que se esta buscando
+     */
     public  void existeUsuario(String Username)
     {
         Mensaje existe = new Mensaje();
