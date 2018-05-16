@@ -44,6 +44,9 @@ public class HiloLectura extends Thread{
         this.serverSocket = serverSocket;
     }
     @Override
+    /**
+     * Función que crea un 'canal' dedicado a cada cliente después de haber establecido la comunicación con el server en el hilo de lectura general.
+     */
     public void run() {
         try {
             Socket lectura = serverSocket.accept();
@@ -55,6 +58,11 @@ public class HiloLectura extends Thread{
             System.out.println("Error conectando con cliente: " + ex.getMessage());
         }
     }
+    /**
+     * Función que manda a llamar a las operaciones en la BD según las solicitudes del cliente
+     * @param lectura socket del cliente que solicita la operacion en la BD y que se utiliza para crear una nueva conexión
+     * @throws IOException 
+     */
     public void leerSocket(Socket lectura) throws IOException {        
         boolean condicion = true;
         synchronized (oos) {
@@ -363,6 +371,12 @@ public class HiloLectura extends Thread{
             }
         }
     }
+    /**
+     * Función que envia un mensaje recibido de un cliente a otro
+     * @param mensaje objeto de tipo mensaje en el que se tiene toda la información del mensaje a enviar
+     * @param ip variable tipo string que contiene la ip del destinatario, con la que se obtiene posteriormente el hilo de lectura del destinatario
+     * @return retorna true si se envió correctamente, false si no fue así
+     */
     public synchronized boolean enviarMensaje(Mensaje mensaje, String ip) {
         boolean res;
         HiloLectura hiloDestinatario;
@@ -382,6 +396,11 @@ public class HiloLectura extends Thread{
 //                                System.out.println("Guardado en log");
     return res;
     }
+    /**
+     * Función que recibe los mensajes nuevos del cliente y se los envia
+     * @param mensaje objeto tipo mensaje
+     * @return 
+     */
     public synchronized boolean mensajeNuevo(Mensaje mensaje) {
         boolean res;
         try {
@@ -395,6 +414,11 @@ public class HiloLectura extends Thread{
         }
         return res;
     }
+    /**
+     * Función para enviar mensajes a un gupo
+     * @param mensaje objeto de tipo mensaje que contiene la información del mensaje a enviar
+     * @param ipIntegrantes lista de tipo strings con las ip de todos los integrantes del grupo
+     */
     public synchronized void enviarMensajeGrupo(Mensaje mensaje, List<String> ipIntegrantes) {
         mensaje.setNombre("GRUPO");
         synchronized (conexiones) {

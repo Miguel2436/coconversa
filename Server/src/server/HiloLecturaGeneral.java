@@ -23,12 +23,21 @@ public class HiloLecturaGeneral extends Thread{
     private int socket;
     private HashMap<String, HiloLectura> conexiones;
     
+    /**
+     * Constructor que asigna los valores recibidos a los atrbutos de la clase
+     * @param socket variable de tipo int
+     * @param conexiones hash map
+     * @throws IOException 
+     */
     public HiloLecturaGeneral (int socket, HashMap<String, HiloLectura> conexiones) throws IOException{
         this.socket = socket;
         this.conexiones = conexiones;
         serverSocket = new ServerSocket(socket);
     }
-
+/**
+ * Función que espera a las conexiones de clientes con el server, al conectarse obtiene la dirección ip y el puerto con
+ * los cuales se conectó
+ */
     @Override
     public void run(){        
         Socket lectura = null;
@@ -58,7 +67,13 @@ public class HiloLecturaGeneral extends Thread{
             }
         }
     }
-    
+    /**
+     * Función que crea un nuevo hilo para la comunicación con el cliente que solicita
+     * @param direccionCliente variable de tipo string
+     * @param lectura tipo socket
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
     public void leerSocket(String direccionCliente, Socket lectura) throws IOException, ClassNotFoundException{
         System.out.println("Leyendo...");
         ObjectOutputStream oos = new ObjectOutputStream(lectura.getOutputStream());

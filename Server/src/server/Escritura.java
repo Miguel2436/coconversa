@@ -23,7 +23,9 @@ public class Escritura {
     private Connection conexion;
     PreparedStatement sql;
     ResultSet rs;
-
+/** 
+ * Constructor de la clase que realiza la conexion a la BD
+ */
     public Escritura() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -467,6 +469,12 @@ public class Escritura {
         return lista;
         } return null;
     }
+    /**
+     * Funcion que hace la consulta a la tabla conexion de la BD para conocer la IP de determinado usuario
+     * @param usuario objeto de tipo usuario (usuario con el que se va a buscar)
+     * @return Retorna la Ip en caso de encontrarla, de no ser así retorna nulo
+     * @throws SQLException 
+     */
     public String getIp(Usuario usuario) throws SQLException {
         sql = conexion.prepareStatement("Select ipaddress from conexion where usuario = ?");
         sql.setString(1, usuario.getNombre());
