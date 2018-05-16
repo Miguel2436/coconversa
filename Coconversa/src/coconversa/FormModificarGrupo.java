@@ -30,11 +30,25 @@ public class FormModificarGrupo extends JFrame implements ActionListener
     private JPanel pnlListaAmigos;
     private JScrollPane scrListaAmigos;
     private JButton btnModificarGrupo;
-    private List<Usuario> usuariosGeneral; //Lista para traer a los usuarios
+    private List<Usuario> usuariosGeneral;
     private List<JCheckBox> listaChecks = new ArrayList<>();
     private ObjectOutputStream OOS;
     private String groupName, userName;
-    public FormModificarGrupo(ObjectOutputStream oos, String userName,String groupName, List<Usuario> usuarios) {
+    
+    /**
+     * Manda a llamar la función "configurar" y "componentes".
+     * El Form sirve para modificar el nombre de un grupo y sus integrantes.
+     * @param oos
+     * Es el objeto por el cual se escribe al socket.
+     * @param userName
+     * Es el nombre de usuario del sistema.
+     * @param groupName
+     * Es el nombre del grupo que se va a modificar.
+     * @param usuarios 
+     * Es la lista con todos los amigos del usuario iniciado en el sistema.
+     */
+    public FormModificarGrupo(ObjectOutputStream oos, String userName, String groupName, List<Usuario> usuarios)
+    {
         this.usuariosGeneral = usuarios;
         this.OOS = oos;
         this.groupName = groupName;
@@ -43,6 +57,9 @@ public class FormModificarGrupo extends JFrame implements ActionListener
         componentes();
     }
     
+    /**
+     * En esta función se configura el nombre y tamaño de la ventana, se centra la venatana en la pantalla y se inhabilita la opción de mover manualmente su tamaño.
+     */
     public void configurar()
     {
         this.setTitle("Modificar Grupo");
@@ -51,6 +68,9 @@ public class FormModificarGrupo extends JFrame implements ActionListener
         this.setResizable(false);
     }
     
+    /**
+     * En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar el diseño de la ventana.
+     */
     public void componentes()
     {
         lblModificarGrupo = new JLabel("Modificar Grupo");
@@ -102,7 +122,12 @@ public class FormModificarGrupo extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-            
+    
+    /**
+     * Esta función es mandada a llamar cuando se presiona un botón y dependiendo de cual haya sido presionado se ejecutará una parte de código u otra.
+     * @param e 
+     * Es el "identificador" del botón que fue presionado. Con "e" se evalúa cual botón mandó a llamar la función para ejecutar cierto código.
+     */
     @Override
     public void actionPerformed(ActionEvent e) 
     {
