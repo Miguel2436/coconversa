@@ -42,7 +42,13 @@ public class ClienteHiloLectura implements Runnable
     private Usuario user;
     public ClienteHiloLectura (){
    }
-   
+  /**
+   * Constructor de la clase para inicializar object output stream y object input stream en el cliente y el socket por el que se va a comunicar con el server
+   * @param OOS
+   * @param socketParametro
+   * @param Chat
+   * @throws IOException 
+   */ 
    public ClienteHiloLectura (ObjectOutputStream OOS, Socket socketParametro,FormChat Chat) throws IOException{
         this.clientesSocketLectura = socketParametro;
         this.OOS = OOS;
@@ -50,7 +56,11 @@ public class ClienteHiloLectura implements Runnable
         this.OIS = new  ObjectInputStream (socketParametro.getInputStream());
         Paquete = new Mensaje();
         this.Chat = Chat;
-   }    
+   }
+   /**
+    * Constantemente lee el socket con el ois(object input stream), después con la operación recibida se manda
+    * a llamar a la función de switch
+    */
     @Override
     public void run()    
     {
@@ -68,6 +78,10 @@ public class ClienteHiloLectura implements Runnable
             }
         }
     }
+    /**
+     * Recibe el paquete del server y de acuerdo a la operación obtiene los datos que requiere del paquete y muestra el form correspondiente
+     * @param v 
+     */
     public void SWITCH(String v){
         switch(v){
         case"LOGIN":
