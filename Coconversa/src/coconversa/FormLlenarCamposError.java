@@ -36,7 +36,7 @@ public class FormLlenarCamposError extends JFrame implements ActionListener
     }
     
     /**
-     * En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar el diseño de la ventana.
+     *  En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar el diseño de la ventana.
      */
     public void componentes()
     {
