@@ -28,10 +28,22 @@ public class Log {
     
     public Log() {
     }
+    /**
+     * 
+     * @return devuelve un objeto del tipo log para hacer que se instancie solo
+     */
     public static synchronized Log getInstancia() {
         if (log == null) log = new Log();
         return log;
     }
+    /**
+     * Se utiliza para verificar que exista la carpeta del remitente y si no crearla
+     * @param destinatario Es el usuario que va a recibir el mensaje y se utiliza para crear su carpeta
+     * @param remitente Es el usuario que esta enviando el mensaje 
+     * @param mensaje Es el mensaje que se envió
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public synchronized void crearLogConversacion(Usuario destinatario, Usuario remitente, String mensaje) throws FileNotFoundException, IOException {
         System.out.println("Creando log de " + destinatario.getNombre());
         File logUsuario = new File(destinatario.getNombre() + ".txt");  //Se crea el archivo con el nombre del usuario
@@ -47,6 +59,11 @@ public class Log {
         fos.write(cadenaJson.getBytes("utf-8"));
         System.out.println("Archivo creado en: " + logUsuario.getPath());
     }
+    /**
+     * Sirve para devolver las conversaciones guardadas en el log de un usuario
+     * @param usuario Es el usuario del que se desea obtener el log
+     * @return devuelve una lista del tipo logConversacion, en donde estan guardados los mensajes y si no encuentra ningun mensaje retorna null
+     */
     public synchronized  List<LogConversacion> getLogConversacion(Usuario usuario) {
         File archivo = new File(usuario.getNombre() + ".txt");  //Se crea el archivo con el nombre del usuario
         List<LogConversacion> LogConversaciones = null;
@@ -84,6 +101,13 @@ public class Log {
         
         return LogConversaciones;
     }
+    /**
+     * Se utiliza para crear el archivo de un grupo en donde se guardara el log de las conversaciones del mismo
+     * @param grupo Se recibe el nombre del grupo del que se hara el archivo, para darle el nombre del grupo
+     * @param integrantes Es una lista con los usuarios pertenecientes al grupo
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public synchronized void crearLogGrupo(Grupo grupo, List<Usuario> integrantes) throws FileNotFoundException, IOException {
         System.out.println("Creando archivo de grupo " + grupo.getNombre());
         File archivo = new File(grupo.getNombre() + ".txt");    //Se crea el archivo con el nombre del usuario
@@ -101,6 +125,11 @@ public class Log {
         } else throw new IOException("");                       //Si el archivo ya existe se lanza excepcion para hacerselo saber al invocador
         System.out.println("Archivo creado en: " + archivo.getPath());
     }
+    /**
+     * Sirve para devolver los mensajes que se tengan en el archivo de log de determinado grupo
+     * @param grupo Es el grupo del que se desea obtener el log
+     * @return 
+     */
     public synchronized LogGrupo getLogGrupo(Grupo grupo) {
         File archivo = new File(grupo.getNombre() + ".txt");    //Se crea el archivo con el nombre de grupo
         LogGrupo logGrupo = new LogGrupo();
@@ -135,6 +164,13 @@ public class Log {
         
         return logGrupo;
     }
+    /**
+     * Se utiliza para añadir un mensaje al archivo del log, si este no esta creado manda a la funcion para crearlo
+     * @param destinatario Es el usuario que va a recibir el mensaje
+     * @param remitente Es el usuario que esta enviando el mensaje
+     * @param mensaje   El texto que el usuario mandó
+     * @throws IOException 
+     */
     public synchronized void addMensaje(Usuario destinatario, Usuario remitente, String mensaje) throws IOException {
         List<LogConversacion> logConversaciones = getLogConversacion(destinatario);             //Se obtiene todo el log del usuario
         if (logConversaciones == null) crearLogConversacion(destinatario, remitente, mensaje);  //Si se obtiene null se crea y agrega el primer mensaje
@@ -163,6 +199,12 @@ public class Log {
             fos.write(cadenaJson.getBytes("utf-8"));               //con los cambios ya hechos
         }
     }
+    /**
+     * Sirve para devolver los mensajes de una conversacion que se tengan en el archivo log de un usuario.
+     * @param destinatario Es el usuario del que se esta solicitando la conversación.
+     * @param remitente Es el usuario que pide la conversacion.
+     * @return Devuelve en una lista todos los mensajes que se tegan de esa conversacion en el archivo log
+     */
     public synchronized List<String> getMensajes(Usuario destinatario, Usuario remitente){
         List<String> mensajes = new ArrayList<>();
         List<LogConversacion> logConversaciones = getLogConversacion(destinatario);
@@ -178,7 +220,12 @@ public class Log {
         if (mensajes.size() > 5) return mensajes.subList(mensajes.size() - 5, mensajes.size());
         return mensajes;        
     }
-    
+    /**
+     * Se utiliza cuando se manda un nuevo mensaje a un grupo para guardarlo en el archivo de log
+     * @param destinatario Es el grupo al que se envio el mensaje
+     * @param remitente Es el usuario que envio el mensaje
+     * @param mensaje Es el texto del mensaje que se envio
+     */
     public synchronized void addMensajeGrupo(Grupo destinatario, Usuario remitente, String mensaje){
         LogGrupo logGrupo = getLogGrupo(destinatario);
         logGrupo.addMensaje(remitente, mensaje);
@@ -194,6 +241,11 @@ public class Log {
             System.out.println(ex.getMessage());
         }
     }
+    /**
+     * Se utiliza para obtener todos los mensajes de un grupo que se encuentren guardados en el log.
+     * @param grupo El grupo del que se desean obtener los mensajes.
+     * @return Devuelve una lista con todos los mensajes que se encuentren en el log
+     */
     public synchronized List<String> getMensajesGrupo(Grupo grupo){
         List<String> mensajes = new ArrayList<>();
         LogGrupo logGrupo = getLogGrupo(grupo);
@@ -201,6 +253,12 @@ public class Log {
         mensajes = logGrupo.getMensajes();
         return mensajes;        
     }
+    /**
+     * Se utiliza cuando los integrantes del grupo cambiaron, sirve para actualizar los integrantes en el archivo log
+     * @param grupo El grupo al cual se le realizaron cambios
+     * @param integrantes   La lista de los usuarios actuales del grupo
+     * @throws IOException 
+     */
     public synchronized void actualizarIntegrantesGrupo(Grupo grupo, List<Usuario> integrantes) throws IOException {
         LogGrupo logGrupo = getLogGrupo(grupo);
         List<String> usuariosParaAgregar = new ArrayList<>();
