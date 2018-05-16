@@ -1,1 +1,1 @@
-[{"mensajes":["Me amas mas","Me amas mas","Me amas mas"],"remitente":"Grecia"}]
+[{"mensajes":["[Wed May 16 09:31:16 CDT 2018]Fer : Hola"],"remitente":"Fer"}]

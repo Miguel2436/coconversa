@@ -5,7 +5,6 @@
  */
 package server;
 
-import com.google.gson.JsonSyntaxException;
 import datos.Grupo;
 import datos.LogConversacion;
 import datos.LogGrupo;

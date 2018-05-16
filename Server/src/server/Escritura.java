@@ -300,11 +300,8 @@ public class Escritura {
    public void eliminarGrupo(Grupo g) throws SQLException
     {
         //ELIMINAR DATOS DE LA TABLA GRUPO
-            sql = conexion.prepareStatement("DELETE FROM grupo WHERE idGrupo=('"+g.getIdGrupo()+"')");
-            sql.executeUpdate();
-        //ELIMINAR DATOS DE TABLA INTEGRANTESGRUPO
-            sql = conexion.prepareStatement("DELETE FROM integrantesGrupo WHERE Grupo=('"+g.getIdGrupo()+"')");
-            sql.executeUpdate();     
+            sql = conexion.prepareStatement("DELETE FROM grupo WHERE nombre=('"+g.getNombre()+"')");
+            sql.executeUpdate();   
     }
    /**
     * Muestra los usuarios pertenecientes a determinado grupo
@@ -344,16 +341,24 @@ public class Escritura {
     * @param g objeto de tipoo grupo
     */
    public void modificarGrupo(List<Usuario> l, Grupo g) throws SQLException
-   {
-       Usuario intGrupo = new Usuario();
-       sql = conexion.prepareStatement("DELETE FROM integrantesGrupo WHERE Grupo='"+g.getIdGrupo()+"'");
+   {       
+       sql = conexion.prepareStatement("Select idGrupo from grupo where nombre = ?");
+       sql.setString(1, g.getNombre());
+       rs = sql.executeQuery();
+       int idGrupo = 0;
+       if (rs.first()) {
+           idGrupo = rs.getInt(1);
+        }
+       sql = conexion.prepareStatement("DELETE FROM integrantesGrupo WHERE Grupo="+idGrupo);
        sql.executeUpdate();
        Iterator<Usuario> itr = l.iterator();
         while(itr.hasNext())
         {
+            Usuario intGrupo = new Usuario();
             intGrupo=itr.next();
             System.out.println(intGrupo.getNombre());
-                sql = conexion.prepareStatement("INSERT into integrantesGrupo (Usuario, Grupo) VALUES('"+g.getIdGrupo()+"','"+intGrupo.getNombre()+"'");
+                sql = conexion.prepareStatement("INSERT into integrantesGrupo (Usuario, Grupo) VALUES(?,"+idGrupo+")");
+                sql.setString(1, intGrupo.getNombre());
                 sql.executeUpdate();
         }    
    }

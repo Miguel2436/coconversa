@@ -150,6 +150,7 @@ public class HiloLectura extends Thread{
                             grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.crearGrupo(grupo, mensaje.getListaUsuarios());
+                                Log.getInstancia().crearLogGrupo(grupo, escritura.detallesGrupo(grupo));
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
                                 System.out.println("Error escribiendo grupo a bd");
@@ -177,8 +178,10 @@ public class HiloLectura extends Thread{
                             grupo = new Grupo(0, mensaje.getNombre());
                             try {
                                 escritura.modificarGrupo(mensaje.getListaUsuarios(), grupo);
+                                Log.getInstancia().actualizarIntegrantesGrupo(grupo, mensaje.getListaUsuarios());
                                 mensaje.setEstado(true);
                             } catch (SQLException ex) {
+                                System.out.println("Error al escribir en bd: " + ex.toString());
                                 mensaje.setEstado(false);
                             }
                             break;
@@ -274,6 +277,7 @@ public class HiloLectura extends Thread{
                                 System.out.println("Mensaje de " + mensaje.getRemitente() + " para " + mensaje.getDestinatario() + " : " + mensaje.getMensaje());
                                 mensaje.setMensaje("[" + Time.from(Instant.now()) + "]" + mensaje.getRemitente()+ " : " + mensaje.getMensaje());
                                 destinatario = new Usuario(mensaje.getDestinatario(), "");
+                                remitente = new Usuario(mensaje.getRemitente(), "");
                                 String ip = "";
                                 try {
                                     ip = escritura.getIp(destinatario);
@@ -281,6 +285,7 @@ public class HiloLectura extends Thread{
                                     System.out.println("Error obteniendo ip");
                                     mensaje.setEstado(false);
                                 }
+                                Log.getInstancia().addMensaje(destinatario, remitente, mensaje.getMensaje());
                                 if (enviarMensaje(mensaje, ip)) mensaje.setEstado(true);
                                 else mensaje.setEstado(false);                                
                             }
@@ -307,6 +312,7 @@ public class HiloLectura extends Thread{
                                         if (ipUsuario != null && !temp.getNombre().equals(mensaje.getRemitente())) ipIntegrantes.add(ipUsuario);
                                     }                                    
                                     enviarMensajeGrupo(mensaje, ipIntegrantes);
+                                    Log.getInstancia().addMensajeGrupo(grupo, new Usuario(mensaje.getRemitente(), ""), mensaje.getMensaje());
                                     mensaje.setEstado(true);
                                 } catch (SQLException ex) {
                                     System.out.println("Error al leer integrantes: " + ex.toString());
@@ -329,8 +335,8 @@ public class HiloLectura extends Thread{
                                 break;
                             }
                             grupo = new Grupo(0, mensaje.getNombre());
-                            mensaje.setEstado(false);
-                            //mensaje.setListaMensajes(Log.getInstancia().getMensajesGrupo(grupo));
+                            mensaje.setListaMensajes(Log.getInstancia().getMensajesGrupo(grupo));
+                            mensaje.setEstado(true);
                             break;
                         case "NOTIFICACIONES":
                             usuario = new Usuario(mensaje.getNombre(),"");
