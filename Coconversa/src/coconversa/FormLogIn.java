@@ -108,7 +108,7 @@ public class FormLogIn extends JFrame implements ActionListener
     /**
      * Esta función es mandada a llamar cuando se presiona un botón y dependiendo de cual haya sido presionado se ejecutará una parte de código u otra.
      * @param ae
-     * Es el "identificador" del botón que fue presionado. Con "e" se evalúa cual botón mandó a llamar la función para ejecutar cierto código.
+     * Es el "identificador" del botón que fue presionado. Con "ae" se evalúa cual botón mandó a llamar la función para ejecutar cierto código.
      */
     @Override
     public void actionPerformed(ActionEvent ae) 
