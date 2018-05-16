@@ -684,7 +684,7 @@ public  class chat{
         txtMensajes = new JTextField();
         btnEnviar = new JButton("Enviar");
         
-        txtMensajes.addKeyListener(new KeyListener(){
+        /*txtMensajes.addKeyListener(new KeyListener(){
             @Override
             public void keyTyped(KeyEvent ke) {
             }
@@ -712,7 +712,7 @@ public  class chat{
             public void keyReleased(KeyEvent e) {
            }
             
-        });
+        });*/
         btnEnviar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
