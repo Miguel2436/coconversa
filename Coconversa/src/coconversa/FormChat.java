@@ -590,21 +590,7 @@ public class FormChat extends JFrame implements ActionListener
                 FEG.setVisible(true);
             }
        }
-        //CONDICIÓN SI EL BOTON DE SALIR GRUPO ES ACCIONADO
-       if(ae.getSource() == btnSalirGruposChat)
-       {
-         if(listaGruposChat.getSelectedValue()!=null) 
-         {
-           ClienteHiloEscritura sGrupo = new ClienteHiloEscritura(OOS); 
-           sGrupo.salirGrupo(listaGruposChat.getSelectedValue().toString());
-         }
-          else
-            {//Mira, según yo ya quedó lo de CrearGrupo, ModificarGrupo, EliminarGrupo
-             //Pero el de Salir del grupo estoy confundido esque no existe aquí
-                FormErrorGeneral FEG= new FormErrorGeneral("Seleccione el grupo a salir prro");
-                FEG.setVisible(true);
-            }
-       }
+      
        //-----------------------------CONDICIONES DE CHAT-------------------------------------------------
        if(ae.getSource()==btnMensajeGruposChat){
            if(listaGruposChat.getSelectedValue()!=null){  
