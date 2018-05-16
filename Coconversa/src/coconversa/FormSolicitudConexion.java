@@ -53,14 +53,9 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
         txtIPsolicitudConexion.setHorizontalAlignment(JTextField.CENTER);
         btnEnviarSolicitudConexion = new JButton("Acceder");
         btnEnviarSolicitudConexion.addActionListener(this);
-        txtIPsolicitudConexion.addKeyListener(new KeyListener() {
+        /*txtIPsolicitudConexion.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent ke) {
-                
-            }
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
                 if (ke.getKeyCode()== KeyEvent.VK_ENTER)
                 {
                    enviar(); 
@@ -68,20 +63,16 @@ public class FormSolicitudConexion extends JFrame implements ActionListener
                 else {
                     if(ke.getKeyCode()== KeyEvent.VK_BACK_SPACE)
                     {
-                        txtIPsolicitudConexion.setText(txtIPsolicitudConexion.getText().substring(0,txtIPsolicitudConexion.getText().length()));
+                        txtIPsolicitudConexion.setText(txtIPsolicitudConexion.getText().substring(0,txtIPsolicitudConexion.getText().length()-1));
                     }
                     else {
                         txtIPsolicitudConexion.setText(txtIPsolicitudConexion.getText()+ke.getKeyChar());
+                        int x = 0;
+                        while (x < 100000) {x++;}
                     }
                 }
-                //wait(10);
             }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                
-            }
-        });
+        });*/
         
         GroupLayout contentPane = new GroupLayout(this.getContentPane());
         contentPane.setAutoCreateContainerGaps(true);
