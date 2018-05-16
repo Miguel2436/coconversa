@@ -1,6 +1,7 @@
 package coconversa;
 
 import clientes.ClienteHiloEscritura;
+import clientes.ClienteHiloLectura;
 import datos.Mensaje;
 import datos.Usuario;
 import java.awt.Color;
@@ -12,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Time;
@@ -100,7 +103,16 @@ public class FormChat extends JFrame implements ActionListener
         this.setMinimumSize(new Dimension(1100,450));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                ClienteHiloEscritura cle = new ClienteHiloEscritura(OOS);
+                cle.cerrarSesion(Usuario);
+                System.exit(0);
+            }
+            
+});
     }
     
     public void componentes()
@@ -590,7 +602,6 @@ public class FormChat extends JFrame implements ActionListener
                 FEG.setVisible(true);
             }
        }
-      
        //-----------------------------CONDICIONES DE CHAT-------------------------------------------------
        if(ae.getSource()==btnMensajeGruposChat){
            if(listaGruposChat.getSelectedValue()!=null){  
@@ -666,7 +677,7 @@ public  class chat{
     }
     
     public JPanel getPanel(){
-         //Genra acomodo de componentes
+         //Genera acomodo de componentes
         AreaChat = new JTextArea();
         AreaChat.setEditable(false);
         
