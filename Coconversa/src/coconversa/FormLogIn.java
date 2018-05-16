@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 
 public class FormLogIn extends JFrame implements ActionListener
 {
-
     private JLabel lblIngresar, lblNombre, lblContraseña;
     private JPanel pnlIngresar, pnlBotones;
     private JTextField txtNombre;
@@ -28,6 +27,12 @@ public class FormLogIn extends JFrame implements ActionListener
     private JButton btnIniciarSesion, btnRegistrar;
     private ObjectOutputStream OOS;
     
+    /**
+     * Manda a llamar la función "configurar" y "componentes".
+     * El Form sirve para que el usuario inicie sesión en el sistema.
+     * @param OOS
+     * Es el objeto por el cual se escribe al socket.
+     */
     public FormLogIn(ObjectOutputStream OOS)
     {
         this.OOS = OOS;
@@ -35,6 +40,9 @@ public class FormLogIn extends JFrame implements ActionListener
         componentes();
     }
     
+    /**
+     * En esta función se configura el nombre y tamaño de la ventana, se centra la venatana en la pantalla y se inhabilita la opción de mover manualmente su tamaño.
+     */
     public void configurar()
     {
         this.setTitle("LogIn");
@@ -44,7 +52,10 @@ public class FormLogIn extends JFrame implements ActionListener
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-     
+    
+    /**
+     * En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar el diseño de la ventana.
+     */
     public void componentes()
     {
 
@@ -93,7 +104,12 @@ public class FormLogIn extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-        
+    
+    /**
+     * Esta función es mandada a llamar cuando se presiona un botón y dependiendo de cual haya sido presionado se ejecutará una parte de código u otra.
+     * @param ae
+     * Es el "identificador" del botón que fue presionado. Con "e" se evalúa cual botón mandó a llamar la función para ejecutar cierto código.
+     */
     @Override
     public void actionPerformed(ActionEvent ae) 
     {
