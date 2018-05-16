@@ -25,7 +25,6 @@ import javax.swing.JTextField;
 
 public class FormCrearGrupo extends JFrame implements ActionListener
 {
-    
     private JLabel lblCrearGrupo;
     private JTextField txtNombreGrupo;
     private JPanel pnlListaAmigos;
@@ -35,15 +34,32 @@ public class FormCrearGrupo extends JFrame implements ActionListener
     private List <Usuario> usuariosGeneral; //Lista para traer a los usuarios
     private ObjectOutputStream OOS;
     private String nombreUsuario;
+    
+    /**
+     * Es el constructor de la clase. Recibe tres parámetros y los guarda en los objetos de la propia clase.
+     * Manda a llamar la función "configurar" y "componentes".
+     * El formulario sirve para crear un grupo escribiendo el nombre del grupo y seleccionando los integrantes que
+     * estarán en él.
+     * @param oos
+     * Es el objeto por el cual se escribe al socket.
+     * @param nombreUsuario
+     * Es el nombre del usuario que tiene la sesión iniciada.
+     * @param usuarios 
+     * Es una lista la cual almacena todos los amigos que tiene el usuario con la sesión iniciada.
+     */
     public FormCrearGrupo(ObjectOutputStream oos, String nombreUsuario, List<Usuario> usuarios)
     {
        this.usuariosGeneral = usuarios;
        this.OOS = oos;
        this.nombreUsuario = nombreUsuario;
-        configurar();
-        componentes();
+       configurar();
+       componentes();
     }
     
+    /**
+     * En esta función se configura el nombre y tamaño de la ventana, se centra la venatana en la pantalla y se
+     * inhabilita la opción de mover manualmente su tamaño.
+     */
     public void configurar()
     {
         this.setTitle("Crear Grupo");
@@ -52,6 +68,10 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         this.setResizable(false);
     }
     
+    /**
+     * En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar
+     * el diseño de la ventana.
+     */
     public void componentes()
     {
         lblCrearGrupo = new JLabel("Crear Grupo");
@@ -70,11 +90,7 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         
         btnCrearGrupo = new JButton("Crear Grupo");
         btnCrearGrupo.addActionListener(this);
-        //public piña
-       
-        
-        //
-        
+ 
         pnlListaAmigos.add(Box.createVerticalStrut(10));
         for(int i=0; i<usuariosGeneral.size(); i++)
         {            
@@ -107,7 +123,14 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-            
+    
+    /**
+     * Esta función es mandada a llamar cuando se presiona un botón y dependiendo de cual haya sido presionado
+     * se ejecutará una parte de código u otra.
+     * @param e 
+     * Es el "identificador" del botón que fue presionado. Con "e" se evalúa cual botón mandó a llamar la
+     * función para ejecutar cierto código.
+     */
     @Override
     public void actionPerformed(ActionEvent e) 
     {
@@ -115,17 +138,21 @@ public class FormCrearGrupo extends JFrame implements ActionListener
         { 
             List<Usuario> amigosSeleccionados = new ArrayList<>();
             ClienteHiloEscritura crearGrupo = new ClienteHiloEscritura(OOS);  
-            for (int i = 0; i < listaChecks.size(); i++){
-                try{
+            for (int i = 0; i < listaChecks.size(); i++)
+            {
+                try
+                {
                     JCheckBox temp = (JCheckBox) listaChecks.get(i);
                     if(temp.isSelected()) amigosSeleccionados.add(new Usuario(temp.getText(), ""));
-                }catch (ClassCastException ex) {
-                    
+                }
+                catch (ClassCastException ex) 
+                {    
                 }                
             }
             amigosSeleccionados.add(new Usuario(nombreUsuario, ""));
             FormErrorGeneral feg;
-            if(amigosSeleccionados.size() < 3) {
+            if(amigosSeleccionados.size() < 3) 
+            {
                 feg = new FormErrorGeneral("Necesitas mas integrantes");
                 feg.setVisible(true);
             }
