@@ -14,12 +14,19 @@ public class FormLlenarCamposError extends JFrame implements ActionListener
     private JLabel lblLleneLosCampos;
     private JButton btnVale;
     
+    /**
+     * Manda a llamar las funciones "configurar" y "componentes".
+     * Este Form muestra un error cuando algún JTextField está vacío.
+     */
     public FormLlenarCamposError()
     {
         configurar();
         componentes();
     }
     
+    /**
+     * En esta función se configura el nombre y tamaño de la ventana, se centra la venatana en la pantalla y se inhabilita la opción de mover manualmente su tamaño.
+     */
     public void configurar()
     {
         this.setTitle("Error");
@@ -28,6 +35,9 @@ public class FormLlenarCamposError extends JFrame implements ActionListener
         this.setResizable(false); 
     }
     
+    /**
+     * En esta función se inicializan todos los componentes y se acomodan en sus respectivos grupos para generar el diseño de la ventana.
+     */
     public void componentes()
     {
         lblLleneLosCampos = new JLabel("Por favor, llene todos los campos");
@@ -54,7 +64,12 @@ public class FormLlenarCamposError extends JFrame implements ActionListener
         this.setLayout(contentPane);
         this.pack();
     }
-
+    
+    /**
+     * Esta función es mandada a llamar cuando se presiona un botón y dependiendo de cual haya sido presionado se ejecutará una parte de código u otra.
+     * @param ae 
+     * Es el "identificador" del botón que fue presionado. Con "ae" se evalúa cual botón mandó a llamar la función para ejecutar cierto código.
+     */
     @Override
     public void actionPerformed(ActionEvent ae) 
     {
