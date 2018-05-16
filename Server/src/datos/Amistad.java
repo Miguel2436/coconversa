@@ -76,10 +76,18 @@ public class Amistad implements Serializable{
     public void setEstado(int estado) {
         this.estado = estado;
     }
-
+    /*
+        Constructor vacio
+    */
     public Amistad() {
     }
-
+/**
+ * Constructor con parametros para la creación y asignación de valores de un objeto de tipo Amistad
+ * @param idAmistad int
+ * @param solicitante string
+ * @param solicitado string
+ * @param estado int
+ */
     public Amistad(int idAmistad, String solicitante, String solicitado, int estado) {
         this.idAmistad = idAmistad;
         this.solicitante = solicitante;

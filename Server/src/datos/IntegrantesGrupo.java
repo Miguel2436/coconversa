@@ -60,7 +60,12 @@ public class IntegrantesGrupo implements Serializable{
     
     public IntegrantesGrupo() {
     }
-
+/**
+ * Constructor con parametros para la creación y asignación de valores de un objeto de tipo integrantesGrupo
+ * @param idIntegrantesGrupo
+ * @param usuario
+ * @param grupo 
+ */
     public IntegrantesGrupo(int idIntegrantesGrupo, String usuario, int grupo) {
         this.idIntegrantesGrupo = idIntegrantesGrupo;
         this.usuario = usuario;

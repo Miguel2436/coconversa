@@ -76,7 +76,13 @@ public class Conexion implements Serializable{
 
     public Conexion() {
     }
-
+    /**
+     * Constructor con parametros para la creación y asignación de valores de un objeto de tipo conexion
+     * @param idConexion int 
+     * @param ipAddress string
+     * @param estado int
+     * @param usuario string
+     */
     public Conexion(int idConexion, String ipAddress, int estado, String usuario) {
         this.idConexion = idConexion;
         this.ipAddress = ipAddress;

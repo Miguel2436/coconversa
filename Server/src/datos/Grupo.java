@@ -45,7 +45,11 @@ public class Grupo implements Serializable{
 
     public Grupo() {
     }
-
+    /**
+     * Constructor con parametros para la creación y asignación de valores de un objeto de tipo grupo
+     * @param idGrupo int 
+     * @param nombre string
+     */
     public Grupo(int idGrupo, String nombre) {
         this.idGrupo = idGrupo;
         this.nombre = nombre;

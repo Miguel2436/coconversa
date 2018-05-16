@@ -25,22 +25,38 @@ public class LogConversacion {
         this.remitente = remitente.getNombre();
         this.mensajes = new ArrayList<>();
     }
-
+/**
+ * Función que retorna el remitente de los mesajes
+ * @return 
+ */
     public String getRemitente() {
         return remitente;
     }
-
+/**
+ * Asigna el valor del remitente
+ * @param remitente 
+ */
     public void setRemitente(Usuario remitente) {
         this.remitente = remitente.getNombre();
     }
-
+    /**
+     * Obtiene los mensajes enviados por dicho remitente
+     * @return 
+     */
     public List<String> getMensajes() {
         return mensajes;
     }
-
+/**
+ * Asigna valores a los mensajes 
+ * @param mensajes 
+ */
     public void setMensajes(List<String> mensajes) {
         this.mensajes = mensajes;
     }
+    /**
+     * Agrega un mensaje a la lista de mensajes
+     * @param mensaje  string
+     */
     public void addMensaje(String mensaje) {
         mensajes.add(mensaje);
     }
